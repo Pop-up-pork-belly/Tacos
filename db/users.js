@@ -6,9 +6,7 @@ async function createUser({ username, password }) {
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
 
   try {
-    const {
-      rows: [user],
-    } = await client.query(
+    const result = await client.query(
       `
     INSERT INTO users(username, password)
     VALUES ($1, $2)
@@ -17,7 +15,9 @@ async function createUser({ username, password }) {
     `,
       [username, hashedPassword]
     );
+    const user = result.rows[0];
     delete user.password;
+    console.log("created USER...", user, hashedPassword);
     return user;
   } catch (error) {
     console.error(error);
