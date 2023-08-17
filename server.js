@@ -1,3 +1,4 @@
+require('dotenv').config();
 const http = require("http");
 const app = require("./app");
 const client = require("./db/client");
@@ -14,6 +15,6 @@ server.listen(PORT, async () => {
     await rebuildDB();
     console.log("Database Seeding completed");
   } catch (error) {
-    console.error("Error seeding", Error);
+    console.error("Error seeding", error);
   }
 });
