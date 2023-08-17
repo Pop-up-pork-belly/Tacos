@@ -14,19 +14,19 @@ async function createTables() {
     CREATE TABLE IF NOT EXISTS users(
         id SERIAL PRIMARY KEY,
         username VARCHAR(225) UNIQUE NOT NULL,
-        password VARCHAR(225) NOT NULL,
+        password VARCHAR(225) NOT NULL
     );
     CREATE TABLE IF NOT EXISTS credit_card(
-        cardNumber NVARCHAR(16)
-        ExpMonth TINYINT(2),
-        ExpYear SMALLINT(4)
+        cardNumber VARCHAR(16),
+        ExpMonth INTEGER,
+        ExpYear INTEGER
     );
     CREATE TABLE IF NOT EXISTS products(
-        id SERIAL PRIMARY KEY 
+        id SERIAL PRIMARY KEY,
         product_name VARCHAR(225) NOT NULL,
-        price INTEGER(4),
-        "teamId" INTEGER(99)
-        quantity INTEGER(99)
+        price INTEGER,
+        "teamId" INTEGER,
+        quantity INTEGER
     );
     CREATE TABLE IF NOT EXISTS order_history(
         orderId SERIAL PRIMARY KEY,
@@ -44,10 +44,10 @@ async function dropTables() {
   try {
     console.log("Dropping Tables...");
     await client.query(`
-        DROP TABLE IF EXIST users;
-        DROP TABLE IF EXIST credit_card;
-        DROP TABLE IF EXIST products;
-        DROP TABLE IF EXIST order_history;
+        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS credit_card;
+        DROP TABLE IF EXISTS products;
+        DROP TABLE IF EXISTS order_history;
 
         `);
   } catch (error) {
@@ -59,10 +59,10 @@ async function createInitialUsers() {
   console.log("Creating users....");
   try {
     const usersToCreate = [
-      { username: "ed", password: "123" },
-      { username: "yoo", password: "123" },
-      { username: "drew", password: "sup" },
-      { username: "harshil", password: "123" },
+      { username: "ed", password: "12312313fafsadfas" },
+      { username: "yoo", password: "123adsfasd" },
+      { username: "drew", password: "supadfa" },
+      { username: "harshil", password: "123asdf" },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
     console.log("users created:");
