@@ -1,8 +1,7 @@
 const { Pool } = require("pg");
+const { localHostConnection } = require('../localhostconnect.js')
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  "postgresql://postgres:messi3214@localhost:5432/esports";
+const connectionString = localHostConnection || process.env.DATABASE_URL ;
 
 const client = new Pool({
   connectionString,
