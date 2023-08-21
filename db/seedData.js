@@ -2,6 +2,7 @@ const { createUser } = require("./");
 const client = require("./client");
 const { faker } = require("@faker-js/faker");
 const { createProducts } = require("./products");
+const { createShippingInfo } = require("./shipping");
 
 async function createTables() {
   try {
@@ -66,11 +67,11 @@ async function createTables() {
     CREATE TABLE IF NOT EXISTS shipping_info(
         id SERIAL PRIMARY KEY,
         "orderId" INTEGER REFERENCES orders(id),
-        shipping_address VARCHAR(255),
-        shipping_city VARCHAR(255),
-        shipping_state VARCHAR(255),
-        shipping_zip VARCHAR(10),
-        shipping_country VARCHAR(255)
+        street VARCHAR(255),
+        city VARCHAR(255),
+        state VARCHAR(255),
+        zip VARCHAR(10),
+        country VARCHAR(255)
     )
     `);
   } catch (error) {
@@ -114,7 +115,7 @@ async function createInitialUsers() {
   }
 }
 
-async function createInitialProduocts() {
+async function createInitialProducts() {
   console.log("Creating Products...");
   try {
     const productsToCreate = [
@@ -127,13 +128,27 @@ async function createInitialProduocts() {
     console.error("error");
   }
 }
+async function createInitialShippingInfo() {
+  console.log("Creating ShippingInfo...");
+  try {
+    const shippingToCreate = [
+      { street: "123 W harlem ave", city: "Chicago", state: "IL", zip: "60402", country: "USA"}
+    ];
+    const shipping = await Promise.all(shippingToCreate.map(createShippingInfo));
+    console.log("ShippingInfo created:");
+    console.log(shipping);
+  } catch (error) {
+    console.error("error");
+  }
+}
 
 async function rebuildDB() {
   try {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    await createInitialProduocts();
+    await createInitialProducts();
+    await createInitialShippingInfo();
   } catch (error) {
     console.error("Did not work");
   }
