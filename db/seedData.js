@@ -1,6 +1,7 @@
 const { createUser } = require("./");
 const client = require("./client");
 const { faker } = require("@faker-js/faker");
+const { createProducts } = require("./products");
 
 async function createTables() {
   try {
@@ -15,6 +16,7 @@ async function createTables() {
         "isAdmin" BOOLEAN
     );
     CREATE TABLE IF NOT EXISTS credit_card(
+        id SERIAL PRIMARY KEY,
         cardNumber VARCHAR(16),
         ExpMonth INTEGER,
         ExpYear INTEGER
@@ -32,14 +34,14 @@ async function createTables() {
         quantity INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS carts(
-      cart_id SERIAL PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
       "userId" INTEGER REFERENCES users(id),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
   
   CREATE TABLE IF NOT EXISTS cart_items(
-      cart_item_id SERIAL PRIMARY KEY,
-      "cartId" INTEGER REFERENCES carts(cart_id),
+      id SERIAL PRIMARY KEY,
+      "cartId" INTEGER REFERENCES carts(id),
       "productId" INTEGER REFERENCES products(id),
       quantity INTEGER NOT NULL,
       added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -55,9 +57,9 @@ async function createTables() {
     );
     CREATE TABLE IF NOT EXISTS reviews(
         id SERIAL PRIMARY KEY,
-        product_id INTEGER REFERENCES products(id),
-        user_id INTEGER REFERENCES users(id),
-       rating INTEGER,
+        "productId" INTEGER REFERENCES products(id),
+        "userId" INTEGER REFERENCES users(id),
+        rating INTEGER,
         comment TEXT,
         review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
@@ -112,11 +114,26 @@ async function createInitialUsers() {
   }
 }
 
+async function createInitialProduocts() {
+  console.log("Creating Products...");
+  try {
+    const productsToCreate = [
+      {product_name: "NRG Tenz shirt", price: 25, image: 'test', quantity: 1 }
+    ];
+    const products = await Promise.all(productsToCreate.map(createProducts));
+    console.log("products created:");
+    console.log(products);
+  } catch (error) {
+    console.error("error");
+  }
+}
+
 async function rebuildDB() {
   try {
     await dropTables();
     await createTables();
     await createInitialUsers();
+    await createInitialProduocts();
   } catch (error) {
     console.error("Did not work");
   }
