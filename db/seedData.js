@@ -1,4 +1,4 @@
-const { createUser } = require("./");
+const { createUser } = require("./users");
 const client = require("./client");
 const { faker } = require("@faker-js/faker");
 const { createProducts } = require("./products");
@@ -95,17 +95,37 @@ async function dropTables() {
 `);
   } catch (error) {
     console.error("Error dropping tables:", error.message);
-}
+  }
 }
 
 async function createInitialUsers() {
   console.log("Creating users....");
   try {
     const usersToCreate = [
-      { username: "eddiasde", password: "12312313fafsadfas", email: "ed@ex123afmple.com", isAdmin: false },
-      { username: "yoasdooo", password: "123adsfasd", email: "ed1a321sdasdf@asdexamfasfpsle.com", isAdmin: false  },
-      { username: "d3reasw", password: "supadfa", email: "ed121233@eadxghample.com", isAdmin: false  },
-      { username: "h3arsasdhil", password: "123asdf", email: "ed12asd33asd@exasmfple.com", isAdmin: false  },
+      {
+        username: "eddiasde",
+        password: "12312313fafsadfas",
+        email: "ed@ex123afmple.com",
+        isAdmin: false,
+      },
+      {
+        username: "yoasdooo",
+        password: "123adsfasd",
+        email: "ed1a321sdasdf@asdexamfasfpsle.com",
+        isAdmin: false,
+      },
+      {
+        username: "d3reasw",
+        password: "supadfa",
+        email: "ed121233@eadxghample.com",
+        isAdmin: false,
+      },
+      {
+        username: "h3arsasdhil",
+        password: "123asdf",
+        email: "ed12asd33asd@exasmfple.com",
+        isAdmin: false,
+      },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
     console.log("users created:");
@@ -119,7 +139,7 @@ async function createInitialProducts() {
   console.log("Creating Products...");
   try {
     const productsToCreate = [
-      {product_name: "NRG Tenz shirt", price: 25, image: 'test', quantity: 1 }
+      { product_name: "NRG Tenz shirt", price: 25, image: "test", quantity: 1 },
     ];
     const products = await Promise.all(productsToCreate.map(createProducts));
     console.log("products created:");
@@ -132,9 +152,17 @@ async function createInitialShippingInfo() {
   console.log("Creating ShippingInfo...");
   try {
     const shippingToCreate = [
-      { street: "123 W harlem ave", city: "Chicago", state: "IL", zip: "60402", country: "USA"}
+      {
+        street: "123 W harlem ave",
+        city: "Chicago",
+        state: "IL",
+        zip: "60402",
+        country: "USA",
+      },
     ];
-    const shipping = await Promise.all(shippingToCreate.map(createShippingInfo));
+    const shipping = await Promise.all(
+      shippingToCreate.map(createShippingInfo)
+    );
     console.log("ShippingInfo created:");
     console.log(shipping);
   } catch (error) {

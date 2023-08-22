@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+// const bodyParser = require("body-parser");
 
 const { getUserById } = require("../db");
 
@@ -50,20 +51,20 @@ router.get("/unknown", (req, res) => {
 const usersRouter = require("./users");
 router.use("/users", usersRouter);
 
-// ROUTER: /api/orders
-const ordersRouter = require("./orders");
-router.use("/orders", ordersRouter);
+// // ROUTER: /api/products
+// const productsRouter = require("./products");
+// router.use("/products", productsRouter);
 
-// ROUTER: /api/products
-const productsRouter = require("./products");
-router.use("/products", productsRouter);
+// // ROUTER: /api/reviews
+// const reviewsRouter = require("./reviews");
+// router.use("/reviews", reviewsRouter);
 
-// ROUTER: /api/reviews
-const reviewsRouter = require("./reviews");
-router.use("/reviews", reviewsRouter);
+// // ROUTER: /api/orders
+// const ordersRouter = require("./orders");
+// router.use("/orders", ordersRouter);
 
-// ROUTER: /api/shipping
-const shippingRouter = require("./shipping");
-router.use("/shipping", shippingRouter);
+// // ROUTER: /api/shipping
+// const shippingRouter = require("./shipping");
+// router.use("/shipping", shippingRouter);
 
 module.exports = router;
