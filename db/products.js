@@ -15,29 +15,28 @@ async function createProducts({product_name, price, categoryId, image, quantity}
     }
 }
 
-async function getProducts(){
+async function getAllProducts(){
     try{
         const {rows:[products]} = await client.query(`
         SELECT * 
         FROM prodcuts;
         `)
-        console.log("getting all prodcuts", products)
         return products
     }catch(error){
         console.error(error)
     }
 }
 
-async function getProductsById(productId){
+async function getProductsById(id){
     try{
         const {rows:[product]} = await client.query(`
         SELECT products
         FROM products
         WHERE id = $1;
-        `,[productId])
+        `,[id])
         return product
     }catch(error){
         console.error(error)
     }
 }
-module.exports ={createProducts, getProducts, getProductsById}
+module.exports ={createProducts, getAllProducts, getProductsById}
