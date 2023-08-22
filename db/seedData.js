@@ -3,6 +3,7 @@ const client = require("./client");
 const { faker } = require("@faker-js/faker");
 const { createProducts } = require("./products");
 const { createShippingInfo } = require("./shipping");
+const { createOrder } = require("./orders");
 
 async function createTables() {
   try {
@@ -53,7 +54,7 @@ async function createTables() {
         "userId" INTEGER REFERENCES users(id),
         "productsId" INTEGER REFERENCES products(id),
         quantity INTEGER NOT NULL,
-        total_price INTEGER NOT NULL,
+        total INTEGER NOT NULL,
         order_date DATE DEFAULT CURRENT_DATE
     );
     CREATE TABLE IF NOT EXISTS reviews(
@@ -142,6 +143,20 @@ async function createInitialShippingInfo() {
   }
 }
 
+async function createInitialOrder() {
+  console.log("Creating Order...");
+  try {
+    const orderToCreate = [
+      {"userId": 2, "productsId":1, quantity: 2, total: 100, }
+    ];
+    const order = await Promise.all(orderToCreate.map(createOrder));
+    console.log("Order created:");
+    console.log(order);
+  } catch (error) {
+    console.error("error");
+  }
+}
+
 async function rebuildDB() {
   try {
     await dropTables();
@@ -149,6 +164,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialProducts();
     await createInitialShippingInfo();
+    await createInitialOrder();
   } catch (error) {
     console.error("Did not work");
   }
