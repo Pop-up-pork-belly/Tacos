@@ -8,10 +8,14 @@ const { requireUser } = require("./utils.js");
 
 const {
   createUser,
+  getAllUsers,
   //   getUser,
   //   getUserById,
   getUserByUsername,
 } = require("../db");
+
+// GET /api/users
+router.get("/");
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -41,16 +45,16 @@ router.post("/register", async (req, res, next) => {
         password,
       });
       //console.log("what is this exactly,", process.env.JWT_SECRET);
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "2w",
-        }
-      );
+      // const token = jwt.sign(
+      //   {
+      //     id: user.id,
+      //     username,
+      //   },
+      //   process.env.JWT_SECRET,
+      //   {
+      //     expiresIn: "2w",
+      //   }
+      // );
       //console.log("Line 52 is this part here!");
       // console.log("responseBodyinCode: ", res.body);
       res.send({
@@ -103,14 +107,34 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// GET /api/users/me
-router.get("/users", async (req, res, next) => {
+// GET /api/users/profile
+router.get("/:username/profile", requireUser, async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const currentUser = await getUserByUsername(username);
+    if (!currentUser) {
+      next({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      res.send(currentUsers);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/orders
+router.get("/:username/orders", requireUser, async (req, res, next) => {
   const { username } = req.params;
 });
 
-// GET /api/users/:username/routines
-router.get("/:username/routines", async (req, res, next) => {
+// GET /api/users/cart
+router.get("/:username/cart", requireUser, async (req, res, next) => {
   const { username } = req.params;
 });
+
+// PATCH /api/users(admin)/products?
 
 module.exports = router;

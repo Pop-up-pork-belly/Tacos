@@ -30,6 +30,19 @@ async function createUser({ username, password, email, isAdmin }) {
   }
 }
 
+async function getAllUsers() {
+  try {
+    const { rows } = await client.query(`
+    SELECT * 
+    FROM users;
+    `);
+
+    return rows;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function getUser({ username, password }) {
   const user = await getUserByUsername(username);
   const hashedPassword = user.password;
@@ -85,6 +98,7 @@ async function getUserByUsername(username) {
 
 module.exports = {
   createUser,
+  getAllUsers,
   getUser,
   getUserByUsername,
   getUserById,
