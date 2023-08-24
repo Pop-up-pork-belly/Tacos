@@ -5,6 +5,24 @@ const { createProducts } = require("./products");
 const { createShippingInfo } = require("./shipping");
 const { createOrder } = require("./orders");
 
+async function dropTables() {
+  try {
+    console.log("Dropping Tables...");
+    await client.query(`
+    DROP TABLE IF EXISTS shipping_info CASCADE;
+    DROP TABLE IF EXISTS reviews CASCADE;
+    DROP TABLE IF EXISTS orders CASCADE;
+    DROP TABLE IF EXISTS carts CASCADE;
+    DROP TABLE IF EXISTS cart_items CASCADE;
+    DROP TABLE IF EXISTS products CASCADE;
+    DROP TABLE IF EXISTS product_categories CASCADE;
+    DROP TABLE IF EXISTS credit_card CASCADE;
+    DROP TABLE IF EXISTS users;
+`);
+  } catch (error) {
+    console.error("Error dropping tables:", error.message);
+  }
+}
 async function createTables() {
   try {
     console.log("building tables...");
@@ -77,25 +95,6 @@ async function createTables() {
     `);
   } catch (error) {
     console.error(error);
-  }
-}
-
-async function dropTables() {
-  try {
-    console.log("Dropping Tables...");
-    await client.query(`
-    DROP TABLE IF EXISTS shipping_info CASCADE;
-    DROP TABLE IF EXISTS reviews CASCADE;
-    DROP TABLE IF EXISTS orders CASCADE;
-    DROP TABLE IF EXISTS carts CASCADE;
-    DROP TABLE IF EXISTS cart_items CASCADE;
-    DROP TABLE IF EXISTS products CASCADE;
-    DROP TABLE IF EXISTS product_categories CASCADE;
-    DROP TABLE IF EXISTS credit_card CASCADE;
-    DROP TABLE IF EXISTS users CASCADE;
-`);
-  } catch (error) {
-    console.error("Error dropping tables:", error.message);
   }
 }
 

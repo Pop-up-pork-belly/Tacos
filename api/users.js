@@ -55,8 +55,6 @@ router.post("/register", async (req, res, next) => {
           expiresIn: "2w",
         }
       );
-      console.log("Line 52 is this part here!");
-      console.log("responseBodyinCode: ", res.body);
       res.send({
         message: "Thank you for registering! :)",
         token: "token",
@@ -78,8 +76,6 @@ router.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUser({ username, password });
-    console.log('TEST>>>>>>1123', )
-    console.log(user)
     if (user) {
       const token = jwt.sign({
         id: user.id, username: user.username
@@ -92,8 +88,10 @@ router.post("/login", async (req, res, next) => {
           "username": username,
 
         },
+        
         message: "you're logged in!", token
       });
+      console.log("YOU ARE LOGGED IN ")
     }
   } catch (error) {
     console.log("unable to log in");
