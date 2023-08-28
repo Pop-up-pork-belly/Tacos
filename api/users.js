@@ -25,14 +25,14 @@ router.post("/register", async (req, res, next) => {
   try {
     const _user = await getUserByUsername(username);
     if (_user) {
-      //console.log("LINE 24 in USERS/API", _user);
+      //console.log("register_Section: ", _user);
       res.send({
         name: "UserNameExistsError",
         message: `User ${username} is already taken.`,
       });
     }
     if (password.length < passwordMinLength) {
-      //console.log("password", password);
+      //console.log("register_password", password);
       res.send({
         name: "PasswordMustBe8CharactersError",
         message: "Password Too Short!",
@@ -65,7 +65,6 @@ router.post("/register", async (req, res, next) => {
       });
     }
   } catch (error) {
-    //console.log("This is line 66 in Catch section", { name, message });
    next(error)
   }
 });
@@ -89,13 +88,16 @@ router.post("/login", async (req, res, next) => {
 
         },
         
-        message: "you're logged in!", token
+        message: "You're logged in!", token
       });
       console.log("YOU ARE LOGGED IN ")
     }
-  } catch (error) {
-    console.log("unable to log in");
-    next(error);
+  } catch ({ name, message }) {
+    console.log("Unable to log in");
+    next({
+      name: 'LoginError',
+      message: 'An error has occurred during login.'
+    });
   }
 });
 
@@ -105,12 +107,12 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
   try {
     const currentUser = await getUserByUsername(username);
     if (!currentUser) {
-      next({
+      res.send({
         name: "WrongProfileUser",
         message: "You are not permitted to see this profile!",
       });
     } else {
-      res.send(currentUsers);
+      res.send(currentUser);
     }
   } catch ({ name, message }) {
     next({ name, message });
@@ -120,6 +122,11 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
 // GET /api/users/orders
 router.get("/:username/orders", requireUser, async (req, res, next) => {
   const { username } = req.params;
+  const user = req.user;
+
+  try {
+    const userOrders = await getAllOrders
+  }
 });
 
 // GET /api/users/cart
