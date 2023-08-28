@@ -28,62 +28,73 @@ async function createTables() {
     console.log("building tables...");
 
     await client.query(`
-    CREATE TABLE IF NOT EXISTS users(
+      CREATE TABLE IF NOT EXISTS users(
         id SERIAL PRIMARY KEY,
         username VARCHAR(225) UNIQUE NOT NULL,
         password VARCHAR(225) NOT NULL,
         email VARCHAR(255) NOT NULL,
         "isAdmin" BOOLEAN
-    );
-    CREATE TABLE IF NOT EXISTS credit_card(
+      );
+
+      CREATE TABLE IF NOT EXISTS credit_card(
         id SERIAL PRIMARY KEY,
         cardNumber VARCHAR(16),
         ExpMonth INTEGER,
         ExpYear INTEGER
-    );
-    CREATE TABLE IF NOT EXISTS product_categories(
-      id SERIAL PRIMARY KEY,
-      category_name VARCHAR(255) NOT NULL
-  );
-    CREATE TABLE IF NOT EXISTS products(
+      );
+
+      CREATE TABLE IF NOT EXISTS product_categories(
+        id SERIAL PRIMARY KEY,
+        category_name VARCHAR(255) NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS products(
         id SERIAL PRIMARY KEY,
         product_name VARCHAR(225) NOT NULL,
         price INTEGER NOT NULL,
         "categoryId" INTEGER REFERENCES product_categories(id),
         image BYTEA,
         quantity INTEGER NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS carts(
-      id SERIAL PRIMARY KEY,
-      "userId" INTEGER REFERENCES users(id),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
+        UNIQUE("categoryId")
+      );
+
+      CREATE TABLE IF NOT EXISTS carts(
+        id SERIAL PRIMARY KEY,
+        "userId" INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        UNIQUE("userId")
+      );
   
-  CREATE TABLE IF NOT EXISTS cart_items(
-      id SERIAL PRIMARY KEY,
-      "cartId" INTEGER REFERENCES carts(id),
-      "productId" INTEGER REFERENCES products(id),
-      quantity INTEGER NOT NULL,
-      added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
+      CREATE TABLE IF NOT EXISTS cart_items(
+        id SERIAL PRIMARY KEY,
+        "cartId" INTEGER REFERENCES carts(id),
+        "productId" INTEGER REFERENCES products(id),
+        quantity INTEGER NOT NULL,
+        added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        UNIQUE("cartId", "productId")
+      );
   
-    CREATE TABLE IF NOT EXISTS orders(
+      CREATE TABLE IF NOT EXISTS orders(
         id SERIAL PRIMARY KEY,
         "userId" INTEGER REFERENCES users(id),
         "productsId" INTEGER REFERENCES products(id),
         quantity INTEGER NOT NULL,
         total INTEGER NOT NULL,
         order_date DATE DEFAULT CURRENT_DATE
-    );
-    CREATE TABLE IF NOT EXISTS reviews(
+        UNIQUE("userId", "productsId")
+      );
+
+      CREATE TABLE IF NOT EXISTS reviews(
         id SERIAL PRIMARY KEY,
-        "productId" INTEGER REFERENCES products(id),
         "userId" INTEGER REFERENCES users(id),
+        "productId" INTEGER REFERENCES products(id),
         rating INTEGER,
         comment TEXT,
         review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS shipping_info(
+        UNIQUE("userId", "productId")
+      );
+    
+      CREATE TABLE IF NOT EXISTS shipping_info(
         id SERIAL PRIMARY KEY,
         "orderId" INTEGER REFERENCES orders(id),
         street VARCHAR(255),
@@ -91,7 +102,8 @@ async function createTables() {
         state VARCHAR(255),
         zip VARCHAR(10),
         country VARCHAR(255)
-    )
+        UNIQUE("orderId")
+      );
     `);
   } catch (error) {
     console.error(error);
@@ -174,7 +186,10 @@ async function createInitialOrder() {
   console.log("Creating Order...");
   try {
     const orderToCreate = [
-      {"userId": 2, "productsId":1, quantity: 2, total: 100, }
+      { userId: 2, productsId: 1, quantity: 2, total: 100 },
+      { userId: 3, productsId: 3, quantity: 1, total: 50 },
+      { userId: 4, productsId: 2, quantity: 4, total: 150 },
+      { userId: 5, productsId: 4, quantity: 10, total: 200 },
     ];
     const order = await Promise.all(orderToCreate.map(createOrder));
     console.log("Order created:");
