@@ -31,13 +31,14 @@ async function getAllProducts() {
       rows: [products],
     } = await client.query(`
         SELECT * 
-        FROM prodcuts;
-        `);
-    return products;
-  } catch (error) {
-    console.error(error);
-  }
+        FROM products;
+        `)
+        return products
+    }catch(error){
+        console.error(error)
+    }
 }
+
 
 async function getProductsById(id) {
   try {
@@ -57,10 +58,16 @@ async function getProductsById(id) {
   }
 }
 
-// async function attachProductsToOrders(order) {
-//     try{
-//         const { rows: products } = await client.query(`
-//         SELECT products.*, orders `)
-//     }
-// }
-module.exports = { createProducts, getAllProducts, getProductsById };
+async function deleteProduct(id){
+    try{
+        await client.query(`
+        DELETE FROM products
+        WHERE id=$1;
+        `,[id])
+      
+    }catch(error){
+        console.error(error)
+    }
+}
+module.exports ={createProducts, getAllProducts, getProductsById, deleteProduct}
+
