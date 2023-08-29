@@ -4,43 +4,47 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { requireUser } = require("./utils.js");
-//const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env;
 
 const {
   createUser,
-  //   getUser,
-  //   getUserById,
+  getAllUsers,
+    getUser,
+    getUserById,
   getUserByUsername,
 } = require("../db");
+
+// GET /api/users
+router.get("/");
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
   console.log("req.body: ", req.body);
-  const { username, password } = req.body;
+  const { username, password, email, isAdmin } = req.body;
   const passwordMinLength = 8;
   try {
     const _user = await getUserByUsername(username);
     if (_user) {
-      //console.log("LINE 24 in USERS/API", _user);
+      //console.log("register_Section: ", _user);
       res.send({
         name: "UserNameExistsError",
         message: `User ${username} is already taken.`,
-        error: "",
       });
     }
     if (password.length < passwordMinLength) {
-      //console.log("password", password);
+      //console.log("register_password", password);
       res.send({
         name: "PasswordMustBe8CharactersError",
         message: "Password Too Short!",
-        error: "",
       });
     } else {
       const user = await createUser({
         username,
         password,
+        email,
+        isAdmin
       });
-      //console.log("what is this exactly,", process.env.JWT_SECRET);
+      console.log("what is this exactly,", process.env.JWT_SECRET);
       const token = jwt.sign(
         {
           id: user.id,
@@ -51,66 +55,85 @@ router.post("/register", async (req, res, next) => {
           expiresIn: "2w",
         }
       );
-      //console.log("Line 52 is this part here!");
-      // console.log("responseBodyinCode: ", res.body);
       res.send({
         message: "Thank you for registering! :)",
-        token: token,
+        token: "token",
         user: {
-          id: user.id,
-          username,
+          "id": user.id,
+          username
         },
       });
     }
-  } catch ({ name, message }) {
-    //console.log("This is line 66 in Catch section", { name, message });
-    next({ name, message });
+  } catch (error) {
+   next(error)
   }
 });
 
 // POST /api/users/login
 router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-  if (!username || !password) {
+
+  try {
+    const user = await getUser({ username, password });
+    if (user) {
+      const token = jwt.sign({
+        id: user.id, username: user.username
+      },
+        process.env.JWT_SECRET);
+
+      res.send({
+        "user": {
+          "id": user.id,
+          "username": username,
+
+        },
+        
+        message: "You're logged in!", token
+      });
+      console.log("YOU ARE LOGGED IN ")
+    }
+  } catch ({ name, message }) {
+    console.log("Unable to log in");
     next({
-      name: "MissingInfoError",
-      message: "Please enter both username and password.",
+      name: 'LoginError',
+      message: 'An error has occurred during login.'
     });
   }
+});
+
+// GET /api/users/profile
+router.get("/:username/profile", requireUser, async (req, res, next) => {
+  const { username } = req.params;
   try {
-    const user = await getUserByUsername(username, password);
-    const SALT_COUNT = 10;
-    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
-    const token = jwt.sign({ id: user.id, username }, process.env.JWT_SECRET);
-    if (!user && !user.password == !hashedPassword) {
+    const currentUser = await getUserByUsername(username);
+    if (!currentUser) {
       res.send({
-        name: "WrongInfoError",
-        message: "Username or password is incorrect.",
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
       });
     } else {
-      res.send({
-        message: "you're logged in!",
-        token: token,
-        user: {
-          id: user.id,
-          username,
-        },
-      });
+      res.send(currentUser);
     }
-  } catch (error) {
-    console.log("unable to log in");
-    next(error);
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
-// GET /api/users/me
-router.get("/users", async (req, res, next) => {
+// GET /api/users/orders
+router.get("/:username/orders", requireUser, async (req, res, next) => {
+  const { username } = req.params;
+  const user = req.user;
+
+  try {
+    const userOrders = await getAllOrders
+  }
+});
+
+// GET /api/users/cart
+router.get("/:username/cart", requireUser, async (req, res, next) => {
   const { username } = req.params;
 });
 
-// GET /api/users/:username/routines
-router.get("/:username/routines", async (req, res, next) => {
-  const { username } = req.params;
-});
+// PATCH /api/users(admin)/products?
 
 module.exports = router;

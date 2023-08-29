@@ -1,23 +1,35 @@
 const client = require("./client");
 
-async function createProducts({product_name, price, categoryId, image, quantity}) {
-
-    try{
-        const {rows:[product]} = await client.query(`
+async function createProducts({
+  product_name,
+  price,
+  categoryId,
+  image,
+  quantity,
+}) {
+  try {
+    const {
+      rows: [product],
+    } = await client.query(
+      `
         INSERT INTO products(product_name, price, "categoryId", image, quantity)
         VALUES($1, $2, $3, $4, $5)
         RETURNING *;
-        `, [product_name, price, categoryId, image, quantity ])
+        `,
+      [product_name, price, categoryId, image, quantity]
+    );
 
-        return product;
-    }catch(error){
-        console.error(error)
-    }
+    return product;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-async function getAllProducts(){
-    try{
-        const {rows:[products]} = await client.query(`
+async function getAllProducts() {
+  try {
+    const {
+      rows: [products],
+    } = await client.query(`
         SELECT * 
         FROM products;
         `)
@@ -27,17 +39,23 @@ async function getAllProducts(){
     }
 }
 
-async function getProductsById(id){
-    try{
-        const {rows:[product]} = await client.query(`
+
+async function getProductsById(id) {
+  try {
+    const {
+      rows: [product],
+    } = await client.query(
+      `
         SELECT products
         FROM products
         WHERE id = $1;
-        `,[id])
-        return product
-    }catch(error){
-        console.error(error)
-    }
+        `,
+      [id]
+    );
+    return product;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function deleteProduct(id){
@@ -52,3 +70,4 @@ async function deleteProduct(id){
     }
 }
 module.exports ={createProducts, getAllProducts, getProductsById, deleteProduct}
+
