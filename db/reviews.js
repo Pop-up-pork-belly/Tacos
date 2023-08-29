@@ -18,6 +18,29 @@ try {
         console.log(error)
     }
 
+async function getReviewById(id)
+    try {
+        const { rows: [review] } = await client.query(`
+        SELECT * FROM reviews
+        WHERE id=$1;
+        `, [id])
+        return review
+    } catch (error) {
+        console.log(error)
+    }
+
+    async function getReviewByProduct(productId)
+    try {
+        const { rows: [review] } = await client.query(`
+        SELECT * FROM reviews
+        where "productId"=$1;
+        `, [productId])
+        return review
+    } catch (error) {
+        console.log(error)
+    }
 module.exports = {
-    createReview
+    createReview,
+    getReviewById,
+    getReviewByProduct
 }
