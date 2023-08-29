@@ -119,20 +119,20 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
   }
 });
 
-// GET /api/users/orders
-router.get("/:username/orders", requireUser, async (req, res, next) => {
-  const { username } = req.params;
-  const user = req.user;
+// // GET /api/users/orders
+// router.get("/:username/orders", requireUser, async (req, res, next) => {
+//   const { username } = req.params;
+//   const user = req.user;
 
-  try {
-    const userOrders = await getAllOrders
-  }
-});
+//   try {
+//     const userOrders = await getAllOrders
+//   }
+// });
 
-// GET /api/users/cart
-router.get("/:username/cart", requireUser, async (req, res, next) => {
-  const { username } = req.params;
-});
+// // GET /api/users/cart
+// router.get("/:username/cart", requireUser, async (req, res, next) => {
+//   const { username } = req.params;
+// });
 
 // PATCH /api/users(admin)/products?
 

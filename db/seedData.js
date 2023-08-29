@@ -54,14 +54,14 @@ async function createTables() {
         price INTEGER NOT NULL,
         "categoryId" INTEGER REFERENCES product_categories(id),
         image BYTEA,
-        quantity INTEGER NOT NULL
+        quantity INTEGER NOT NULL,
         UNIQUE("categoryId")
       );
 
       CREATE TABLE IF NOT EXISTS carts(
         id SERIAL PRIMARY KEY,
         "userId" INTEGER REFERENCES users(id),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE("userId")
       );
   
@@ -70,7 +70,7 @@ async function createTables() {
         "cartId" INTEGER REFERENCES carts(id),
         "productId" INTEGER REFERENCES products(id),
         quantity INTEGER NOT NULL,
-        added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE("cartId", "productId")
       );
   
@@ -80,7 +80,7 @@ async function createTables() {
         "productsId" INTEGER REFERENCES products(id),
         quantity INTEGER NOT NULL,
         total INTEGER NOT NULL,
-        order_date DATE DEFAULT CURRENT_DATE
+        order_date DATE DEFAULT CURRENT_DATE,
         UNIQUE("userId", "productsId")
       );
 
@@ -90,7 +90,7 @@ async function createTables() {
         "productId" INTEGER REFERENCES products(id),
         rating INTEGER,
         comment TEXT,
-        review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE("userId", "productId")
       );
     
@@ -101,7 +101,7 @@ async function createTables() {
         city VARCHAR(255),
         state VARCHAR(255),
         zip VARCHAR(10),
-        country VARCHAR(255)
+        country VARCHAR(255),
         UNIQUE("orderId")
       );
     `);
