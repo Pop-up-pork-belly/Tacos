@@ -47,13 +47,13 @@ router.get("/unknown", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// // ROUTER: /api/users
-// const usersRouter = require("./users");
-// router.use("/users", usersRouter);
+// ROUTER: /api/users
+const usersRouter = require("./users");
+router.use("/users", usersRouter);
 
-// // ROUTER: /api/products
-// const productsRouter = require("./products");
-// router.use("/products", productsRouter);
+// ROUTER: /api/products
+const productsRouter = require("./products");
+router.use("/products", productsRouter);
 
 // // ROUTER: /api/reviews
 // const reviewsRouter = require("./reviews");

@@ -19,7 +19,7 @@ async function getAllProducts(){
     try{
         const {rows:[products]} = await client.query(`
         SELECT * 
-        FROM prodcuts;
+        FROM products;
         `)
         return products
     }catch(error){
@@ -39,4 +39,16 @@ async function getProductsById(id){
         console.error(error)
     }
 }
-module.exports ={createProducts, getAllProducts, getProductsById}
+
+async function deleteProduct(id){
+    try{
+        await client.query(`
+        DELETE FROM products
+        WHERE id=$1;
+        `,[id])
+      
+    }catch(error){
+        console.error(error)
+    }
+}
+module.exports ={createProducts, getAllProducts, getProductsById, deleteProduct}
