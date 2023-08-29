@@ -8,17 +8,17 @@ datasource db {
 }
 
 model cart_items {
-  cart_item_id Int       @id @default(autoincrement())
-  cartId       Int?
-  productId    Int?
-  quantity     Int
-  added_at     DateTime? @default(now()) @db.Timestamp(6)
-  carts        carts?    @relation(fields: [cartId], references: [cart_id], onDelete: NoAction, onUpdate: NoAction)
-  products     products? @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        Int       @id @default(autoincrement())
+  cartId    Int?
+  productId Int?
+  quantity  Int
+  added_at  DateTime? @default(now()) @db.Timestamp(6)
+  carts     carts?    @relation(fields: [cartId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products  products? @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model carts {
-  cart_id    Int          @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   userId     Int?
   created_at DateTime?    @default(now()) @db.Timestamp(6)
   cart_items cart_items[]
@@ -27,6 +27,7 @@ model carts {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model credit_card {
+  id         Int     @id @default(autoincrement())
   cardnumber String? @db.VarChar(16)
   expmonth   Int?
   expyear    Int?
@@ -46,7 +47,7 @@ model orders {
   userId        Int?
   productsId    Int?
   quantity      Int
-  total_price   Int
+  total         Int
   order_date    DateTime?       @default(dbgenerated("CURRENT_DATE")) @db.Date
   products      products?       @relation(fields: [productsId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users         users?          @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -74,24 +75,24 @@ model products {
 
 model reviews {
   id          Int       @id @default(autoincrement())
-  product_id  Int?
-  user_id     Int?
+  productId   Int?
+  userId      Int?
   rating      Int?
   comment     String?
   review_date DateTime? @default(now()) @db.Timestamp(6)
-  products    products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users       users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products    products? @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users       users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model shipping_info {
-  id               Int     @id @default(autoincrement())
-  orderId          Int?
-  shipping_address String? @db.VarChar(255)
-  shipping_city    String? @db.VarChar(255)
-  shipping_state   String? @db.VarChar(255)
-  shipping_zip     String? @db.VarChar(10)
-  shipping_country String? @db.VarChar(255)
-  orders           orders? @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id      Int     @id @default(autoincrement())
+  orderId Int?
+  street  String? @db.VarChar(255)
+  city    String? @db.VarChar(255)
+  state   String? @db.VarChar(255)
+  zip     String? @db.VarChar(10)
+  country String? @db.VarChar(255)
+  orders  orders? @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model users {
