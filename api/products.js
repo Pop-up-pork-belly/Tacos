@@ -1,23 +1,23 @@
 const express = require("express");
-const { createProducts, getAllProducts, deleteProduct } = require("../db");
+const { createProducts, getAllProducts, deleteProduct, updateProduct } = require("../db");
 const router = express.Router();
 
-// function isAdmin(req, res, next) {
-//   const user = req.user;
-//   console.log("TESTTTTTT>>>>>>>>", user.isAdmin)
-//   if(user && user.isAdmin) {
-//     next()
-//   }else{
-//     res.status(403).json({message: 'Only admins can perform this action'})
-//   }
-// }
+function isAdmin(req, res, next) {
+  const user = req.user;
+
+  if(user && user.isAdmin) {
+    next()
+  }else{
+    res.status(403).json({message: 'Only admins can perform this action'})
+  }
+}
 
 
 
 //create product(only admin can create product)
 
 
-router.post("/", async (req, res, next)=> {
+router.post("/", isAdmin, async (req, res, next)=> {
 try{
   const {product_name, price, categoryId, image, quantity } = req.body;
 
@@ -34,23 +34,35 @@ try{
 router.get("/getProducts", async (req, res, next)=> {
   try{
     const products = getAllProducts();
-    res.send("getting all products",products)
+    res.send(products)
   }catch(error){
     next(error)
   }
 })
 
 //delete product(only admin can delete products)
-router.delete("/:productId", async (req, res, next)=>{
+router.delete("/:productId",isAdmin, async (req, res, next)=>{
   try{
     const productId = req.params.Id;
     await deleteProduct(productId)
+    res.json({message: "Product deleted successfully"})
   }catch(error){
     next(error)
   }
 })
 
 //edit product
+router.patch("/:productId", isAdmin, async (req, res, next)=> {
+  try{
+    const productId = req.params.productId;
+    const updateProductFields =req.body;
 
+    const updatedProduct = await updateProduct({id: productId, ...updateProductFields});
+
+    res.json(updatedProduct);
+  }catch(error){
+    next(error)
+  }
+});
 
 module.exports = router;

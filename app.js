@@ -13,7 +13,7 @@ app.use(cors());
 
 app.use((req, res) => {
   res.status(404).send({
-    message: "REQUEST FAILED 404",
+    message: "NOT FOUND",
   });
 });
 
