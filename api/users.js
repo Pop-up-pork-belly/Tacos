@@ -134,6 +134,7 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
   }
 });
 
+
 // GET /api/users/orders
 router.get("/:username/orders", requireUser, async (req, res, next) => {
   const { username } = req.params;
@@ -153,6 +154,7 @@ router.get("/:username/orders", requireUser, async (req, res, next) => {
     console.error(error);
   }
 });
+
 
 // PATCH /api/users(admin)/products?
 
