@@ -73,7 +73,7 @@ async function createTables() {
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         UNIQUE("cartId", "productId")
       );
-  
+      
       CREATE TABLE IF NOT EXISTS orders(
         id SERIAL PRIMARY KEY,
         "userId" INTEGER REFERENCES users(id),
@@ -160,6 +160,7 @@ async function createInitialProducts() {
     console.error("error");
   }
 }
+
 async function createInitialShippingInfo() {
   console.log("Creating ShippingInfo...");
   try {

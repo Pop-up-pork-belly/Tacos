@@ -6,18 +6,26 @@ async function createUser({ username, password, email, isAdmin }) {
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
 
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-    INSERT INTO users(username, password, email, "isAdmin")
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT (username) DO NOTHING
-    RETURNING *;
-    `,
-      [username, hashedPassword, email, isAdmin]
-    );
-    console.log({ username, password, email, isAdmin });
+    // const {
+    //   rows: [user],
+    // } = await client.query(
+    //   `
+    // INSERT INTO users(username, password, email, "isAdmin")
+    // VALUES ($1, $2, $3, $4)
+    // ON CONFLICT (username) DO NOTHING
+    // RETURNING *;
+    // `,
+    //   [username, hashedPassword, email, isAdmin]
+    // );
+    // console.log({ username, password, email, isAdmin });
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+        email,
+        isAdmin,
+      },
+    });
     if (user) {
       delete user.password;
       console.log("created USER..", user, hashedPassword);
@@ -32,12 +40,9 @@ async function createUser({ username, password, email, isAdmin }) {
 
 async function getAllUsers() {
   try {
-    const { rows } = await client.query(`
-    SELECT * 
-    FROM users;
-    `);
+    const users = await prisma.user.findAll();
 
-    return rows;
+    return users;
   } catch (error) {
     console.error(error);
   }
