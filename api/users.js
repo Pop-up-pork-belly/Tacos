@@ -9,13 +9,25 @@ const { JWT_SECRET } = process.env;
 const {
   createUser,
   getAllUsers,
-    getUser,
-    getUserById,
+  getUser,
+  getUserById,
   getUserByUsername,
+  getAllOrdersByUser,
 } = require("../db");
 
 // GET /api/users
-router.get("/");
+router.get("/", async (req, res, next) => {
+  try {
+    const allUsers = await getAllUsers();
+    if (allUsers) {
+      res.send({ users: allUsers });
+    } else {
+      throw error;
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -42,7 +54,7 @@ router.post("/register", async (req, res, next) => {
         username,
         password,
         email,
-        isAdmin
+        isAdmin,
       });
       console.log("what is this exactly,", process.env.JWT_SECRET);
       const token = jwt.sign(
@@ -59,13 +71,13 @@ router.post("/register", async (req, res, next) => {
         message: "Thank you for registering! :)",
         token: "token",
         user: {
-          "id": user.id,
-          username
+          id: user.id,
+          username,
         },
       });
     }
   } catch (error) {
-   next(error)
+    next(error);
   }
 });
 
@@ -76,27 +88,30 @@ router.post("/login", async (req, res, next) => {
   try {
     const user = await getUser({ username, password });
     if (user) {
-      const token = jwt.sign({
-        id: user.id, username: user.username
-      },
-        process.env.JWT_SECRET);
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+        },
+        process.env.JWT_SECRET
+      );
 
       res.send({
-        "user": {
-          "id": user.id,
-          "username": username,
-
+        user: {
+          id: user.id,
+          username: username,
         },
-        
-        message: "You're logged in!", token
+
+        message: "You're logged in!",
+        token,
       });
-      console.log("YOU ARE LOGGED IN ")
+      console.log("YOU ARE LOGGED IN ");
     }
   } catch ({ name, message }) {
     console.log("Unable to log in");
     next({
-      name: 'LoginError',
-      message: 'An error has occurred during login.'
+      name: "LoginError",
+      message: "An error has occurred during login.",
     });
   }
 });
@@ -119,20 +134,27 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
   }
 });
 
-// // GET /api/users/orders
-// router.get("/:username/orders", requireUser, async (req, res, next) => {
-//   const { username } = req.params;
-//   const user = req.user;
 
-//   try {
-//     const userOrders = await getAllOrders
-//   }
-// });
+// GET /api/users/orders
+router.get("/:username/orders", requireUser, async (req, res, next) => {
+  const { username } = req.params;
 
-// // GET /api/users/cart
-// router.get("/:username/cart", requireUser, async (req, res, next) => {
-//   const { username } = req.params;
-// });
+  try {
+    const currentUser = await getUserByUsername(username);
+    if (!currentUser) {
+      res.send({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      const ordersByUser = await getAllOrdersByUser(currentUser.id);
+      res.send(ordersByUser);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 
 // PATCH /api/users(admin)/products?
 
