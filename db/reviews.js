@@ -8,7 +8,7 @@ try {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
       `, [productId, userId, rating, comment, review_date]);
-      console.log({ rating, comment, review_date });
+      console.log({productId, userId, rating, comment, review_date });
       if (!review) {
       throw Error
     } else {
