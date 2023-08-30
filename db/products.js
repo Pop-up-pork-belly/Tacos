@@ -40,7 +40,7 @@ async function getAllProducts() {
 }
 
 
-async function getProductsById(id) {
+async function getProductById({id}) {
   try {
     const {
       rows: [product],
@@ -58,7 +58,7 @@ async function getProductsById(id) {
   }
 }
 
-async function deleteProduct(id){
+async function deleteProduct({id}){
     try{
         await client.query(`
         DELETE FROM products
@@ -69,5 +69,25 @@ async function deleteProduct(id){
         console.error(error)
     }
 }
-module.exports ={createProducts, getAllProducts, getProductsById, deleteProduct}
+
+async function updateProduct({id, ...fields}) {
+
+  const setString = Object.keys(fields).map(
+    (key, index) => `"${key}"=$${index + 1}`
+  ).join(', ');
+
+  try{
+    const { rows: [product] } = await client.query(`
+     UPDATE products
+     SET ${setString}
+     WHERE id=${id}
+     RETURNING *;
+    `, Object.values(fields));
+
+    return product;
+  }catch(error){
+    throw error;
+  }
+}
+module.exports ={createProducts, getAllProducts, getProductById, deleteProduct, updateProduct}
 

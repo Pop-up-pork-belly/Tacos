@@ -1,12 +1,12 @@
 async function requireUser(req, res, next) {
   if (!req.user) {
     // console.log(req.user);
-    res.send({
-      error: "Missing logged in User Error",
+    res.status(403).json({
+      error: "Not Authorized",
       message: "You must be logged in to perform this action",
-      name: "MissingUserError",
+      name: "UnauthorizedError",
     });
-  } else {
+  }else{
     next();
   }
 }
