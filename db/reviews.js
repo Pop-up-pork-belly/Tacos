@@ -4,10 +4,10 @@ async function createReview({rating, comment, review_date})
 try {
     const {rows: [review] } = await client.query(
         `
-      INSERT INTO users(rating, comment, review_date)
-      VALUES ($1, $2, $3)
+      INSERT INTO users("productId","userId", rating, comment, review_date)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
-      `, [rating, comment, review_date]);
+      `, [productId, userId, rating, comment, review_date]);
       console.log({ rating, comment, review_date });
       if (!review) {
       throw Error

@@ -6,15 +6,23 @@ const {
     getReviewByProduct
 } = require('../db');
 
-router.get('/', async (req, res, next) => {
+router.get('/:productId', async (req, res, next) => {
+    const productId = Number(req.params.productId);
+    const reviewId =  req.reviews.id
     try {
-        const reviews = await getReviewByProduct();
-        if (!reviews) {
-            throw Error;
+        const reviewProduct = await getReviewByProduct(productId);
+        if (!reviewId) {
+           next ({
+            error: "ERROR!",
+            message: "Review not found",
+            name: "No review"
+           })
         } else {
-            res.send(reviews)
+            res.send(reviewProduct)
         }
     } catch (error) {
         next(error)
     }
 })
+
+router.post('/', async (req, res, next))
