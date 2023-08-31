@@ -64,8 +64,36 @@ async function getReviewByProduct(productId) {
   }
 }
 
+async function deleteReview({id}) {
+  try{
+    await client.query(`
+    DELETE FROM reviews
+    WHERE id=$1;
+    `,[id])
+  
+}catch(error){
+    console.error(error)
+  }
+}
+
+async function getReviewByUser(userId){
+  try{
+    const result = await client.query(`
+    SELECT * FROM review 
+    WHERE "userId" = $1;
+    `, [userId]);
+
+    return result.rows;
+  }catch(error){
+    console.error(error);
+    throw error;
+  }
+}
+
 module.exports = {
   createReview,
   getReviewById,
   getReviewByProduct,
+  deleteReview,
+  getReviewByUser
 };
