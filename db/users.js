@@ -69,9 +69,9 @@ async function getUserById(userId) {
       rows: [user],
     } = await client.query(
       `
-    SELECT id, username, password
-    FROM users
-    WHERE id=$1
+      SELECT id, username, password
+      FROM users
+      WHERE id=$1
     `,
       [userId]
     );

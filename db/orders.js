@@ -1,21 +1,30 @@
 const client = require("./client");
 const { attachProductsToOrders } = require("./products");
 
-async function createOrder({userId, productsId, quantity, total, order_date}){
-
-    try{
-        const {rows:[orders]} = await client.query(`
+async function createOrder({
+  userId,
+  productsId,
+  quantity,
+  total,
+  order_date,
+}) {
+  try {
+    const {
+      rows: [orders],
+    } = await client.query(
+      `
        INSERT INTO orders("userId", "productsId", quantity, total, order_date)
        VALUES($1, $2, $3, $4, $5)
        RETURNING *;
-        `, [userId, productsId, quantity, total, order_date])
+        `,
+      [userId, productsId, quantity, total, order_date]
+    );
 
-        return orders;
-    }catch(error){
-        console.error(error)
-    }
+    return orders;
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 
 async function getAllOrders() {
   try {
@@ -57,10 +66,11 @@ async function getAllOrdersByUser({ userId }) {
       throw Error;
     } else {
       return orders;
-
     }
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 
 async function updateOrder(productsId, quantity, total) {
   try {

@@ -36,13 +36,6 @@ async function createTables() {
         "isAdmin" BOOLEAN
       );
 
-      CREATE TABLE IF NOT EXISTS credit_card(
-        id SERIAL PRIMARY KEY,
-        cardNumber VARCHAR(16),
-        ExpMonth INTEGER,
-        ExpYear INTEGER
-      );
-
       CREATE TABLE IF NOT EXISTS product_categories(
         id SERIAL PRIMARY KEY,
         category_name VARCHAR(255) NOT NULL
@@ -94,16 +87,6 @@ async function createTables() {
         UNIQUE("userId", "productId")
       );
     
-      CREATE TABLE IF NOT EXISTS shipping_info(
-        id SERIAL PRIMARY KEY,
-        "orderId" INTEGER REFERENCES orders(id),
-        street VARCHAR(255),
-        city VARCHAR(255),
-        state VARCHAR(255),
-        zip VARCHAR(10),
-        country VARCHAR(255),
-        UNIQUE("orderId")
-      );
     `);
   } catch (error) {
     console.error(error);
