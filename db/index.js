@@ -3,5 +3,4 @@ module.exports = {
   ...require("./products"),
   ...require("./products"),
   ...require("./orders"),
-  ...require("./shipping"),
 };

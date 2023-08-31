@@ -2,7 +2,6 @@ const { createUser } = require("./users");
 const client = require("./client");
 const { faker } = require("@faker-js/faker");
 const { createProducts } = require("./products");
-const { createShippingInfo } = require("./shipping");
 const { createOrder } = require("./orders");
 
 async function dropTables() {
@@ -170,11 +169,12 @@ async function createInitialOrder() {
   console.log("Creating Order...");
   try {
     const orderToCreate = [
-      { userId: 2, productsId: 1, quantity: 2, total: 100 },
-      { userId: 3, productsId: 3, quantity: 1, total: 50 },
-      { userId: 4, productsId: 2, quantity: 4, total: 150 },
-      { userId: 5, productsId: 4, quantity: 10, total: 200 },
+      { userId: 1, productsId: 1, quantity: 2, total: 100, },
+      { userId: 2, productsId: 1, quantity: 1, total: 50, },
+      { userId: 3, productsId: 1, quantity: 4, total: 150, },
+      { userId: 4, productsId: 1, quantity: 10, total: 200, },
     ];
+    // console.log(orderToCreate, "checking orderToCreate from seedData 177") 
     const order = await Promise.all(orderToCreate.map(createOrder));
     console.log("Order created:");
     console.log(order);

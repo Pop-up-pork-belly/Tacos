@@ -15,6 +15,7 @@ async function createOrder({
       `
        INSERT INTO orders("userId", "productsId", quantity, total, order_date)
        VALUES($1, $2, $3, $4, $5)
+       ON CONFLICT ("userId", "productsId") DO NOTHING
        RETURNING *;
         `,
       [userId, productsId, quantity, total, order_date]
@@ -133,7 +134,7 @@ async function deleteOrder(id) {
 
 module.exports = {
   createOrder,
-  getOrderById,
+  // getOrderById,
   getAllOrders,
   getAllOrdersByUser,
   updateOrder,
