@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
@@ -134,7 +133,6 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
   }
 });
 
-
 // GET /api/users/orders
 router.get("/:username/orders", requireUser, async (req, res, next) => {
   const { username } = req.params;
@@ -154,7 +152,6 @@ router.get("/:username/orders", requireUser, async (req, res, next) => {
     console.error(error);
   }
 });
-
 
 // PATCH /api/users(admin)/products?
 

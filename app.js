@@ -4,9 +4,8 @@ const app = express();
 const apiRouter = require("./api");
 const morgan = require("morgan");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use("/api", apiRouter);
 app.use(morgan("dev"));
 app.use(cors());

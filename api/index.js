@@ -19,12 +19,11 @@ router.use(async (req, res, next) => {
 
     try {
       const { id } = jwt.verify(token, process.env.JWT_SECRET);
-      // console.log(jwt.verify(token, process.env.JWT_SECRET));
       if (id) {
         req.user = await getUserById(id);
         next();
       } else if (!id) {
-        next({ message: "Authorization is not working" });
+        next({ message: "JWT Verification Failed." });
       }
     } catch ({ name, message }) {
       next({ name, message });
@@ -59,12 +58,8 @@ router.use("/products", productsRouter);
 // const reviewsRouter = require("./reviews");
 // router.use("/reviews", reviewsRouter);
 
-// // ROUTER: /api/orders
-// const ordersRouter = require("./orders");
-// router.use("/orders", ordersRouter);
-
-// // ROUTER: /api/shipping
-// const shippingRouter = require("./shipping");
-// router.use("/shipping", shippingRouter);
+// ROUTER: /api/orders
+const ordersRouter = require("./orders");
+router.use("/orders", ordersRouter);
 
 module.exports = router;
