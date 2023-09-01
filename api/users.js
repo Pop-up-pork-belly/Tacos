@@ -3,78 +3,27 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { requireUser } = require("./utils.js");
-const { JWT_SECRET } = process.env;
-
 const {
-  createUser,
-  getAllUsers,
+  login,
+  register,
   getUser,
-  getUserById,
-  getUserByUsername,
-  getAllOrdersByUser,
+  getUsers,
+  updateUser,
+  getOrders,
+  getCart,
 } = require("../db");
-
-// GET /api/users
-router.get("/", async (req, res, next) => {
-  try {
-    const allUsers = await getAllUsers();
-    if (allUsers) {
-      res.send({ users: allUsers });
-    } else {
-      throw error;
-    }
-  } catch (error) {
-    next(error);
-  }
-});
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
   console.log("req.body: ", req.body);
-  const { username, password, email, isAdmin } = req.body;
-  const passwordMinLength = 8;
+  const { password, email } = req.body;
   try {
-    const _user = await getUserByUsername(username);
-    if (_user) {
-      //console.log("register_Section: ", _user);
-      res.send({
-        name: "UserNameExistsError",
-        message: `User ${username} is already taken.`,
-      });
-    }
-    if (password.length < passwordMinLength) {
-      //console.log("register_password", password);
-      res.send({
-        name: "PasswordMustBe8CharactersError",
-        message: "Password Too Short!",
-      });
-    } else {
-      const user = await createUser({
-        username,
-        password,
-        email,
-        isAdmin,
-      });
-      console.log("what is this exactly,", process.env.JWT_SECRET);
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "2w",
-        }
-      );
-      res.send({
-        message: "Thank you for registering! :)",
-        token: "token",
-        user: {
-          id: user.id,
-          username,
-        },
-      });
-    }
+    const { user, token } = await register(email, password);
+    res.send({
+      message: "Thank you for registering! :)",
+      token,
+      user,
+    });
   } catch (error) {
     next(error);
   }
@@ -82,30 +31,17 @@ router.post("/register", async (req, res, next) => {
 
 // POST /api/users/login
 router.post("/login", async (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await getUser({ username, password });
-    if (user) {
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username: user.username,
-        },
-        process.env.JWT_SECRET
-      );
+    const { user, token } = await login(email, password);
 
-      res.send({
-        user: {
-          id: user.id,
-          username: username,
-        },
-
-        message: "You're logged in!",
-        token,
-      });
-      console.log("YOU ARE LOGGED IN ");
-    }
+    res.send({
+      user,
+      token,
+      message: "You're logged in!",
+    });
+    console.log("YOU ARE LOGGED IN ");
   } catch ({ name, message }) {
     console.log("Unable to log in");
     next({
@@ -115,44 +51,75 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// GET /api/users/profile
-router.get("/:username/profile", requireUser, async (req, res, next) => {
-  const { username } = req.params;
+// GET /api/users
+router.get("/", async (req, res, next) => {
   try {
-    const currentUser = await getUserByUsername(username);
-    if (!currentUser) {
-      res.send({
-        name: "WrongProfileUser",
-        message: "You are not permitted to see this profile!",
-      });
-    } else {
-      res.send(currentUser);
-    }
+    const users = await getUsers();
+    res.send(users);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/users/:id
+router.get("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await getUser(id);
+
+    res.send(user);
   } catch ({ name, message }) {
     next({ name, message });
   }
 });
 
-// GET /api/users/orders
-router.get("/:username/orders", requireUser, async (req, res, next) => {
-  const { username } = req.params;
+// GET /api/users/me
+router.get("/me", requireUser, async (req, res, next) => {
+  const { id } = req.user;
+  try {
+    const user = await getUser(id);
+
+    res.send(user);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/:id/orders
+router.get("/:id/orders", requireUser, async (req, res, next) => {
+  const { id } = req.params;
 
   try {
-    const currentUser = await getUserByUsername(username);
-    if (!currentUser) {
-      res.send({
-        name: "WrongProfileUser",
-        message: "You are not permitted to see this profile!",
-      });
-    } else {
-      const ordersByUser = await getAllOrdersByUser(currentUser.id);
-      res.send(ordersByUser);
-    }
+    const orders = await getOrders(id);
+
+    res.send(orders);
   } catch (error) {
     console.error(error);
   }
 });
 
-// PATCH /api/users(admin)/products?
+// UPDATE /api/users/:id
+router.patch("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
 
-module.exports = router;
+  try {
+    const user = await updateUser(id, req.body);
+
+    res.send(user);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/:id/cart
+router.get("/:id/cart", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const cart = await getCart(id);
+
+    res.send(cart);
+  } catch (error) {
+    console.error(error);
+  }
+});

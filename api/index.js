@@ -2,9 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-// const bodyParser = require("body-parser");
 
-const { getUserById } = require("../db");
+const { getUser } = require("../db");
 
 //ROUTER: Authorization for API
 
@@ -20,7 +19,7 @@ router.use(async (req, res, next) => {
     try {
       const { id } = jwt.verify(token, process.env.JWT_SECRET);
       if (id) {
-        req.user = await getUserById(id);
+        req.user = await getUser(id);
         next();
       } else if (!id) {
         next({ message: "JWT Verification Failed." });
@@ -46,20 +45,20 @@ router.get("/unknown", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// ROUTER: /api/users
-const usersRouter = require("./users");
-router.use("/users", usersRouter);
+// ROUTER: /api/orders
+const ordersRouter = require("./orders");
+router.use("/orders", ordersRouter);
 
 // ROUTER: /api/products
 const productsRouter = require("./products");
 router.use("/products", productsRouter);
 
 // // ROUTER: /api/reviews
-// const reviewsRouter = require("./reviews");
-// router.use("/reviews", reviewsRouter);
+const reviewsRouter = require("./reviews");
+router.use("/reviews", reviewsRouter);
 
-// ROUTER: /api/orders
-const ordersRouter = require("./orders");
-router.use("/orders", ordersRouter);
+// ROUTER: /api/users
+const usersRouter = require("./users");
+router.use("/users", usersRouter);
 
 module.exports = router;

@@ -1,115 +1,72 @@
-require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const { requireUser } = require("./utils.js");
 
 const {
-  createOrder,
-  getOrderById,
-  getAllOrders,
-  getAllOrdersByUser,
+  getOrders,
   updateOrder,
   deleteOrder,
+  removeOrderProduct,
+  addOrderProduct,
 } = require("../db");
 
 // GET /api/orders
 router.get("/", async (req, res, next) => {
   try {
-    const allOrders = await getAllOrders();
-    if (allOrders) {
-      res.send({ orders: allOrders });
-    } else {
-      throw error;
-    }
+    const orders = await getOrders();
+
+    res.send(orders);
   } catch (error) {
     next(error);
   }
 });
 
-// POST /api/orders
-router.post("/", requireUser, async (req, res, next) => {
-  console.log("req.body: ", req.body);
-  const { id } = req.user;
-  const { productsId, quantity, total } = req.body;
-
+// PATCH  /api/orders/:id
+router.patch("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
   try {
-    const userId = id;
-    const addOrder = await createOrder({
-      userId,
-      productsId,
-      quantity,
-      total,
-    });
-    res.send(addOrder);
-  } catch ({ name, message }) {
-    next({ name, message });
+    const order = await updateOrder(id, req.body);
+
+    res.send(order);
+  } catch (error) {
+    next(error);
   }
 });
 
-// PATCH  /api/orders/:orderId
-router.patch("/:orderId", requireUser, async (req, res, next) => {
-  const { orderId } = req.params;
-  const { id } = req.user;
-  const { productsId, quantity, total } = req.body;
-
+// DELETE /api/orders/:id/removeProduct/:productId
+router.delete("/:id/removeProduct", requireUser, async (req, res, next) => {
+  const { id, productId } = req.params;
   try {
-    const theOrder = await getOrderById(orderId);
-    console.log("FINDING ORDER BY ID: ", theOrder);
-    if (theOrder.userId === id) {
-      const updateOrder = await updateOrder({
-        id: orderId,
-        ...req.body,
-      });
+    const orderProduct = await removeOrderProduct(id, productId);
 
-      res.send(updateOrder);
-    } else {
-      res.status(403).send({
-        name: "403error",
-        message: `User ${req.user.username} is not allowed to update the order`,
-        error: "Error",
-      });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
+    res.send(orderProduct);
+  } catch (error) {
+    next(error);
   }
 });
 
-// DELETE /api/routines/:routineId
-router.delete("/:orderId", requireUser, async (req, res, next) => {
-  const { orderId } = req.params;
-  const { id } = req.user;
-  // const { productsId, quantity, total } = req.body;
+// POST  /api/orders/:orderId/addProduct
+router.post("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
 
   try {
-    const theOrder = await getOrderById(orderId);
-    if (theOrder.userId === id) {
-      const destroyOrder = await deleteOrder({
-        id: orderId,
-      });
+    const orderProduct = await addOrderProduct(id, req.body);
 
-      res.send(destroyOrder);
-    } else {
-      res.status(403).send({
-        name: "403Error",
-        message: `User ${req.user.username} is not allowed to delete this order!`,
-        error: "Error",
-      });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
+    res.send(orderProduct);
+  } catch (error) {
+    next(error);
   }
 });
 
-// come back and finalized after teammate finalizes products. Also AddProductsToOrders here or on products api and db?
+// DELETE /api/orders/:id
+router.delete("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
 
-// POST /api/orders/:orderId/products
-// router.post("/:orderId/products", requireUser, async (req, res, next) => {
-//   const { orderId } = req.params;
-//   // const { id } = req.user;
-// //   const { productsId, quantity, total } = req.body;
+  try {
+    await deleteOrder(id);
 
-//     return newActivity;
-//   } catch ({ name, message }) {
-//     next({ name, message });
-//   }
-// });
+    res.send({ message: "Order deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+});

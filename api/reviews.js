@@ -1,24 +1,55 @@
 const express = require("express");
 const router = express.Router();
-const { createReview, getReviewById, getReviewByProduct } = require("../db");
+const {
+  getReview,
+  updateReview,
+  createReview,
+  deleteReview,
+} = require("../db");
 
-router.get("/:productId", async (req, res, next) => {
-  const productId = Number(req.params.productId);
-  const reviewId = req.reviews.id;
+// POST /api/reviews
+router.post("/", async (req, res, next) => {
   try {
-    const reviewProduct = await getReviewByProduct(productId);
-    if (!reviewId) {
-      next({
-        error: "ERROR!",
-        message: "Review not found",
-        name: "No review",
-      });
-    } else {
-      res.send(reviewProduct);
-    }
+    const review = await createReview(req.body);
+
+    res.send(review);
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/", async(req, res, next));
+// GET /api/reviews/:id
+router.get("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const review = await getReview(id);
+
+    res.send(review);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PATCH /api/reviews/:id
+router.patch("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const review = await updateReview(id, req.body);
+
+    res.send(review);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/reviews/:id
+router.patch("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    await deleteReview(id, req.body);
+
+    res.send({ message: "Review deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
