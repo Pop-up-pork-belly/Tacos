@@ -117,9 +117,9 @@ router.post("/login", async (req, res, next) => {
 
 // GET /api/users/profile
 router.get("/:username/profile", requireUser, async (req, res, next) => {
-  const { username } = req.params;
+  const { userId } = req.params;
   try {
-    const currentUser = await getUserByUsername(username);
+    const currentUser = await getUserById(userId);
     if (!currentUser) {
       res.send({
         name: "WrongProfileUser",
