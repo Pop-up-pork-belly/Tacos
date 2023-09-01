@@ -5,7 +5,7 @@ const { requireUser } = require("./utils.js");
 
 const {
   createOrder,
-  getOrderById,
+  // getOrderById,
   getAllOrders,
   getAllOrdersByUser,
   updateOrder,
@@ -28,7 +28,6 @@ router.get("/", async (req, res, next) => {
 
 // POST /api/orders
 router.post("/", requireUser, async (req, res, next) => {
-  console.log("req.body: ", req.body);
   const { id } = req.user;
   const { productsId, quantity, total } = req.body;
 
@@ -54,7 +53,6 @@ router.patch("/:orderId", requireUser, async (req, res, next) => {
 
   try {
     const theOrder = await getOrderById(orderId);
-    console.log("FINDING ORDER BY ID: ", theOrder);
     if (theOrder.userId === id) {
       const updateOrder = await updateOrder({
         id: orderId,
