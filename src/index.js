@@ -26,8 +26,8 @@ const App = () => {
   }, [token]);
 
   return (
+    <div className="app">
     <BrowserRouter>
-      <div className="app">
         <Navbar token={token} setToken={setToken} />
         <SearchBar />
         <Routes>
@@ -48,8 +48,8 @@ const App = () => {
           />
         </Routes>
         {loading ? <Loading /> : null}
-      </div>
     </BrowserRouter>
+    </div>
   );
 };
 
