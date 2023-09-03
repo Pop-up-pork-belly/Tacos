@@ -1,21 +1,13 @@
 const express = require("express");
+const router = express.Router();
+const { requireUser, isAdmin } = require("./utils");
+
 const {
   createProducts,
   getAllProducts,
   deleteProduct,
   updateProduct,
 } = require("../db");
-const router = express.Router();
-
-function isAdmin(req, res, next) {
-  const user = req.user;
-
-  if (user && user.isAdmin) {
-    next();
-  } else {
-    res.status(403).json({ message: "Only admins can perform this action" });
-  }
-}
 
 //create product(only admin can create product)
 

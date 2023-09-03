@@ -18,14 +18,7 @@ async function createUser({ username, password, email, isAdmin }) {
       [username, hashedPassword, email, isAdmin]
     );
     console.log({ username, password, email, isAdmin });
-    // const user = await prisma.user.create({
-    //   data: {
-    //     username,
-    //     password: hashedPassword,
-    //     email,
-    //     isAdmin,
-    //   },
-    // });
+
     if (user) {
       delete user.password;
       console.log("created USER..", user, hashedPassword);

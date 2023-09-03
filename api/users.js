@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { requireUser } = require("./utils.js");
-const { JWT_SECRET } = process.env;
+const { requireUser, isAdmin } = require("./utils");
 
 const {
   createUser,
@@ -36,14 +35,12 @@ router.post("/register", async (req, res, next) => {
   try {
     const _user = await getUserByUsername(username);
     if (_user) {
-      //console.log("register_Section: ", _user);
       res.send({
         name: "UserNameExistsError",
         message: `User ${username} is already taken.`,
       });
     }
     if (password.length < passwordMinLength) {
-      //console.log("register_password", password);
       res.send({
         name: "PasswordMustBe8CharactersError",
         message: "Password Too Short!",
@@ -55,7 +52,7 @@ router.post("/register", async (req, res, next) => {
         email,
         isAdmin,
       });
-      console.log("what is this exactly,", process.env.JWT_SECRET);
+
       const token = jwt.sign(
         {
           id: user.id,

@@ -1,6 +1,8 @@
 const express = require("express");
-const { getReviewByProduct, createReview} = require("../db/reviews");
 const router = express.Router();
+const { requireUser, isAdmin } = require("./utils");
+
+const { getReviewByProduct, createReview } = require("../db/reviews");
 
 //get review by Id
 router.get("/:productId", async (req, res, next) => {
@@ -23,25 +25,24 @@ router.get("/:productId", async (req, res, next) => {
 });
 
 //create review
-router.post("/", async(req, res, next) => {
-try{
-  const {productId, userId, rating, comment, review_date} = req.body;
+router.post("/", async (req, res, next) => {
+  try {
+    const { productId, userId, rating, comment, review_date } = req.body;
 
-  const review = await createReview({
-    productId, 
-    userId,
-    rating,
-    comment,
-    review_date
-  });
+    const review = await createReview({
+      productId,
+      userId,
+      rating,
+      comment,
+      review_date,
+    });
 
-  res.status(201).json({message: "review created successfully"})
-  res.send(review)
-}catch(error){
-  console.error(error);
-  next(error);
-}
-
+    res.status(201).json({ message: "review created successfully" });
+    res.send(review);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 //delete review (chceck if routing is correct)
