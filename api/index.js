@@ -60,4 +60,8 @@ router.use("/reviews", reviewsRouter);
 const ordersRouter = require("./orders");
 router.use("/orders", ordersRouter);
 
+// ROUTER: /api/categories
+const categoriesRouter = require("./categories");
+router.use("/categories", categoriesRouter);
+
 module.exports = router;

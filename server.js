@@ -1,10 +1,16 @@
-require('dotenv').config();
+require("dotenv").config();
 const http = require("http");
 const app = require("./app");
 const client = require("./db/client");
 const { rebuildDB } = require("./db/seedData");
 
-const PORT = process.env["PORT"] ?? 3000;
+app.listen(process.env.PORT);
+
+let port = process.env.PORT;
+if (port === null || port == "") {
+  port = 8000;
+}
+app.listen(port);
 const server = http.createServer(app);
 
 server.listen(PORT, async () => {
