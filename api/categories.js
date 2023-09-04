@@ -112,3 +112,5 @@ router.get("/order/:productId", async (req, res, next) => {
     next({ name, message });
   }
 });
+
+module.exports = router;
