@@ -1,13 +1,12 @@
-require("dotenv").config();
 const express = require("express");
 const router = express.Router();
-const { requireUser } = require("./utils.js");
+const { requireUser, isAdmin } = require("./utils");
 
 const {
   createOrder,
-  // getOrderById,
   getAllOrders,
-  getAllOrdersByUser,
+  getOrderById,
+  getAllOrdersByUserId,
   updateOrder,
   deleteOrder,
 } = require("../db");
@@ -29,15 +28,17 @@ router.get("/", async (req, res, next) => {
 // POST /api/orders
 router.post("/", requireUser, async (req, res, next) => {
   const { id } = req.user;
-  const { productsId, quantity, total } = req.body;
+  const { isComplete, total, order_date, productsId, cartId } = req.body;
 
   try {
-    const userId = id;
+    const userOrderId = id;
     const addOrder = await createOrder({
-      userId,
-      productsId,
-      quantity,
+      isComplete,
       total,
+      order_date,
+      userOrderId,
+      productsId,
+      cartId,
     });
     res.send(addOrder);
   } catch ({ name, message }) {
@@ -72,7 +73,7 @@ router.patch("/:orderId", requireUser, async (req, res, next) => {
   }
 });
 
-// DELETE /api/routines/:routineId
+// DELETE /api/orders/:orderId
 router.delete("/:orderId", requireUser, async (req, res, next) => {
   const { orderId } = req.params;
   const { id } = req.user;
@@ -95,6 +96,26 @@ router.delete("/:orderId", requireUser, async (req, res, next) => {
     }
   } catch ({ name, message }) {
     next({ name, message });
+  }
+});
+
+// GET /orders/:userId
+router.get("/order/:userId", async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const order = await getAllOrdersByUserId(userId);
+    if (order) {
+      res.send(order);
+    } else {
+      res.send({
+        error: "DeleteError",
+        title: "Can't find order by user Id",
+        message: `${userId}'s order not found.`,
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 

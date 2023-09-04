@@ -1,13 +1,36 @@
 const express = require("express");
-const { getReviewByProduct, createReview} = require("../db/reviews");
 const router = express.Router();
+const { requireUser, isAdmin } = require("./utils");
+
+const {
+  createReview,
+  getAllReviews,
+  getReviewById,
+  getReviewByProductId,
+  deleteReview,
+  getReviewByUserId,
+} = require("../db/reviews");
+
+// GET /api/reviews
+router.get("/", async (req, res, next) => {
+  try {
+    const allReviews = await getAllReviews();
+    if (allReviews) {
+      res.send({ users: allReviews });
+    } else {
+      throw error;
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 //get review by Id
-router.get("/:productId", async (req, res, next) => {
+router.get("/:productId/:reviewId", async (req, res, next) => {
   const productId = Number(req.params.productId);
   const reviewId = req.reviews.id;
   try {
-    const reviewProduct = await getReviewByProduct(productId);
+    const reviewProduct = await getReviewByProductId(productId);
     if (!reviewId) {
       next({
         error: "ERROR!",
@@ -23,29 +46,28 @@ router.get("/:productId", async (req, res, next) => {
 });
 
 //create review
-router.post("/", async(req, res, next) => {
-try{
-  const {productId, userId, rating, comment, review_date} = req.body;
+router.post("/:reviewId", async (req, res, next) => {
+  try {
+    const { userId, productId, rating, comment, review_date } = req.body;
 
-  const review = await createReview({
-    productId, 
-    userId,
-    rating,
-    comment,
-    review_date
-  });
+    const review = await createReview({
+      userId,
+      productId,
+      rating,
+      comment,
+      review_date,
+    });
 
-  res.status(201).json({message: "review created successfully"})
-  res.send(review)
-}catch(error){
-  console.error(error);
-  next(error);
-}
-
+    res.status(201).json({ message: "review created successfully" });
+    res.send(review);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 //delete review (chceck if routing is correct)
-router.delete("/:username/reviews/:reviewId", async (req, res, next) => {
+router.delete("/:reviewId", async (req, res, next) => {
   try {
     const productId = req.params.productId;
     await deleteProduct(productId);
