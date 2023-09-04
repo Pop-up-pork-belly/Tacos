@@ -13,14 +13,15 @@ const {
 
 router.post("/", isAdmin, async (req, res, next) => {
   try {
-    const { product_name, price, categoryId, image, quantity } = req.body;
+    const { name, description, price, quantity, categoryId, image } = req.body;
 
     const product = await createProducts({
-      product_name,
+      name,
+      description,
       price,
+      quantity,
       categoryId,
       image,
-      quantity,
     });
 
     res.status(201).json({ message: "Product created successfully" });
@@ -30,8 +31,9 @@ router.post("/", isAdmin, async (req, res, next) => {
     next(error);
   }
 });
+
 //get all the products
-router.get("/getProducts", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const products = getAllProducts();
     res.send(products);

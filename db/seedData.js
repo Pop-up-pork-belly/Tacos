@@ -27,7 +27,7 @@ async function createTables() {
         id SERIAL PRIMARY KEY,
         username VARCHAR(225) UNIQUE NOT NULL,
         password VARCHAR(225) NOT NULL,
-        email VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
         "isAdmin" BOOLEAN DEFAULT false,
         "stripeId" VARCHAR(255) NOT NULL,
         "reviewId" INTEGER REFERENCES reviews(id),
@@ -38,17 +38,18 @@ async function createTables() {
       CREATE TABLE IF NOT EXISTS products(
         id SERIAL PRIMARY KEY,
         name VARCHAR(225) UNIQUE NOT NULL,
+        description TEXT NOT NULL,
         price INTEGER NOT NULL,
-        image BYTEA,
         quantity INTEGER NOT NULL,
+        image BYTEA,
         "categoryId" INTEGER REFERENCES product_categories(id),
         "cartId" INTEGER REFERENCES carts(id),
         UNIQUE("categoryId", "cartId")
       );
 
-      CREATE TABLE IF NOT EXISTS product_categories(
+      CREATE TABLE IF NOT EXISTS categories(
         id SERIAL PRIMARY KEY,
-        category_name VARCHAR(255) UNIQUE NOT NULL,
+        name VARCHAR(255) UNIQUE NOT NULL,
         "productId" INTEGER REFERENCES products(id),
         UNIQUE("productId")
       );
@@ -68,9 +69,10 @@ async function createTables() {
         "isComplete" BOOLEAN DEFAULT false,
         total INTEGER NOT NULL,
         order_date DATE DEFAULT CURRENT_DATE,
-        "userId" INTEGER REFERENCES users(id),
+        "userOrderId" INTEGER REFERENCES users(id),
         "productId" INTEGER REFERENCES products(id),
-        UNIQUE("userId", "productsId")
+        "cartId" INTEGER REFERENCES carts(id),
+        UNIQUE("userId", "productsId", "cartId")
       );
             
       CREATE TABLE IF NOT EXISTS carts(
@@ -78,7 +80,6 @@ async function createTables() {
         quantity INTEGER NOT NULL,
         "userId" INTEGER REFERENCES users(id),
         "orderId" INTEGER REFERENCES orders(id),
-        "productId" INTEGER REFERENCES products(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE("userId", "orderId", "productId")
       );

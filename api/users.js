@@ -10,7 +10,11 @@ const {
   getUser,
   getUserById,
   getUserByUsername,
-  getAllOrdersByUser,
+  updateUser,
+  destroyUser,
+  getAllOrdersByUserId,
+  getOrderById,
+  getReviewByUserId,
 } = require("../db");
 
 // GET /api/users
@@ -72,8 +76,8 @@ router.post("/register", async (req, res, next) => {
         },
       });
     }
-  } catch (error) {
-    next(error);
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
@@ -112,6 +116,30 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// GET /api/users/:id
+router.get("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await getUserById(id);
+
+    res.send(user);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/me
+router.get("/me", requireUser, async (req, res, next) => {
+  const { id } = req.user;
+  try {
+    const user = await getUserById(id);
+
+    res.send(user);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
 // GET /api/users/profile
 router.get("/:username/profile", requireUser, async (req, res, next) => {
   const { userId } = req.params;
@@ -132,24 +160,93 @@ router.get("/:username/profile", requireUser, async (req, res, next) => {
 
 // GET /api/users/orders
 router.get("/:username/orders", requireUser, async (req, res, next) => {
-  const { username } = req.params;
+  const { userId } = req.params;
 
   try {
-    const currentUser = await getUserByUsername(username);
+    const currentUser = await getUserById(userId);
     if (!currentUser) {
       res.send({
         name: "WrongProfileUser",
         message: "You are not permitted to see this profile!",
       });
     } else {
-      const ordersByUser = await getAllOrdersByUser(currentUser.id);
+      const ordersByUser = await getAllOrdersByUserId(currentUser.id);
       res.send(ordersByUser);
     }
+  } catch ({ name, message }) {
+    console.error({ name, message });
+  }
+});
+
+// GET /api/users/reviews
+router.get("/:username/reviews", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      res.send({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      const reviewsByUser = await getReviewByUserId(currentUser.id);
+      res.send(ordersByUser);
+    }
+  } catch ({ name, message }) {
+    console.error({ name, message });
+  }
+});
+
+// UPDATE /api/users/:id
+router.patch("/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const user = await updateUser(id, req.body);
+
+    res.send(user);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// DELETE /api/users/:userId
+router.delete("/:userId", requireUser, isAdmin, async (req, res, next) => {
+  const { userId } = req.params;
+  const { id } = req.user;
+
+  try {
+    const theUser = await getUserById(userId);
+    if (theUser.id === id) {
+      const deleteUser = await destroyUser({
+        id: userId,
+      });
+
+      res.send(deleteUser);
+    } else {
+      res.status(403).send({
+        name: "403Error",
+        message: `User ${req.user.username} is not allowed to be deleted.`,
+        error: "Error",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/:id/cart
+router.get("/:id/cart", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const cart = await getOrderById(id);
+
+    res.send(cart);
   } catch (error) {
     console.error(error);
   }
 });
-
-// PATCH /api/users(admin)/products?
 
 module.exports = router;

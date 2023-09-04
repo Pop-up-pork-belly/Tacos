@@ -2,14 +2,35 @@ const express = require("express");
 const router = express.Router();
 const { requireUser, isAdmin } = require("./utils");
 
-const { getReviewByProduct, createReview } = require("../db/reviews");
+const {
+  createReview,
+  getAllReviews,
+  getReviewById,
+  getReviewByProductId,
+  deleteReview,
+  getReviewByUserId,
+} = require("../db/reviews");
+
+// GET /api/reviews
+router.get("/", async (req, res, next) => {
+  try {
+    const allReviews = await getAllReviews();
+    if (allReviews) {
+      res.send({ users: allReviews });
+    } else {
+      throw error;
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 //get review by Id
-router.get("/:productId", async (req, res, next) => {
+router.get("/:productId/:reviewId", async (req, res, next) => {
   const productId = Number(req.params.productId);
   const reviewId = req.reviews.id;
   try {
-    const reviewProduct = await getReviewByProduct(productId);
+    const reviewProduct = await getReviewByProductId(productId);
     if (!reviewId) {
       next({
         error: "ERROR!",
@@ -25,13 +46,13 @@ router.get("/:productId", async (req, res, next) => {
 });
 
 //create review
-router.post("/", async (req, res, next) => {
+router.post("/:reviewId", async (req, res, next) => {
   try {
-    const { productId, userId, rating, comment, review_date } = req.body;
+    const { userId, productId, rating, comment, review_date } = req.body;
 
     const review = await createReview({
-      productId,
       userId,
+      productId,
       rating,
       comment,
       review_date,
@@ -46,7 +67,7 @@ router.post("/", async (req, res, next) => {
 });
 
 //delete review (chceck if routing is correct)
-router.delete("/:username/reviews/:reviewId", async (req, res, next) => {
+router.delete("/:reviewId", async (req, res, next) => {
   try {
     const productId = req.params.productId;
     await deleteProduct(productId);
