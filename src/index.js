@@ -4,20 +4,24 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { loadStripe } from '@stripe/stripe-js';
 
 
+
 import {
   Navbar,
-  Loading,
+  // Loading,
   Register,
-  Login,
+  // Login,
   Profile,
   Homepage,
   Products,
-  Search,
-  SearchBar,
+  Footer, 
+  AdminDashboard
 } from "./components";
 
+// import Products from "./components/Products";
+
+
 const App = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const stripe = loadStripe('pk_test_51NkzIOAVE3vEHYrbJdPRjQRMIxyakUy1R7YDGROCugM5T2Idi6GedvBcK8BZcW3Qu1wGNFz2YS2JUUs8wJsADbjk00GSSnTZbi')
 
@@ -25,32 +29,30 @@ const App = () => {
     localStorage.setItem("token", token);
   }, [token]);
 
-  return (
+  return (<div className="app">
     <BrowserRouter>
-      <div className="app">
         <Navbar token={token} setToken={setToken} />
-        <SearchBar />
+        {/* <SearchBar /> */}
         <Routes>
-          <Route
+          {/* <Route
             path="/Register"
             element={<Register setToken={setToken} setLoading={setLoading} />}
-          />
-          <Route path="/Search" element={<Search />} />
+          /> */}
+          {/* <Route path="/Search" element={<Search />} />
           <Route
             path="/Login"
             element={<Login setToken={setToken} setLoading={setLoading} />}
-          />
+          /> */}
+          <Route path="/Admin" element ={<AdminDashboard />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/" element={<Homepage setLoading={setLoading} />} />
-          <Route
-            path="/Products"
-            element={<Products setLoading={setLoading} />}
-          />
+          <Route path="/Products" element={<Products setLoading={setLoading} />} />
         </Routes>
-        {loading ? <Loading /> : null}
-      </div>
+        <Footer />
     </BrowserRouter>
+    </div>
   );
 };
 
-ReactDOM.render(<App />, document.getElementById("app"));
+ReactDOM.render(<App/>, document.getElementById("app"));
+
