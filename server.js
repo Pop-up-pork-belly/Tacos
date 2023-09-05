@@ -5,7 +5,7 @@ const client = require("./db/client");
 const { rebuildDB } = require("./db/seedData");
 
 // Local:
-// const PORT = process.env["PORT"] ?? 3000;
+const PORT = process.env["PORT"] ?? 3000;
 
 // Heroku below:
 
@@ -19,8 +19,8 @@ app.listen(port);
 
 const server = http.createServer(app);
 
-server.listen(port, async () => {
-  console.log(`Server is listening on PORT:${port}`);
+server.listen(PORT, async () => {
+  console.log(`Server is listening on PORT:${PORT}`);
 
   client.connect();
   try {
