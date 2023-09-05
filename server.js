@@ -19,8 +19,8 @@ app.listen(port);
 
 const server = http.createServer(app);
 
-server.listen(PORT, async () => {
-  console.log(`Server is listening on PORT:${PORT}`);
+server.listen(port, async () => {
+  console.log(`Server is listening on PORT:${port}`);
 
   client.connect();
   try {
