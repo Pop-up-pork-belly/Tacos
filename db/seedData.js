@@ -1,5 +1,4 @@
 const client = require("./client");
-const { faker } = require("@faker-js/faker");
 const { createUser } = require("./user");
 const { createCategory } = require("./category");
 const { createProducts } = require("./product");
