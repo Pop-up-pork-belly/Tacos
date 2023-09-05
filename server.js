@@ -4,17 +4,18 @@ const app = require("./app");
 const client = require("./db/client");
 const { rebuildDB } = require("./db/seedData");
 
-const PORT = process.env["PORT"] ?? 3000;
+// Local:
+// const PORT = process.env["PORT"] ?? 3000;
 
 // Heroku below:
 
-// app.listen(process.env.PORT);
+app.listen(process.env.PORT);
 
-// let port = process.env.PORT;
-// if (port === null || port == "") {
-//   port = 8000;
-// }
-// app.listen(port);
+let port = process.env.PORT;
+if (port === null || port == "") {
+  port = 8000;
+}
+app.listen(port);
 
 const server = http.createServer(app);
 
