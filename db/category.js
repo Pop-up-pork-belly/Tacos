@@ -126,7 +126,6 @@ module.exports = {
   createCategory,
   getAllCategories,
   getCategoryById,
-  getCategoryByProductId,
   deleteCategory,
   updateCategory,
   attachProductsToCategories,
