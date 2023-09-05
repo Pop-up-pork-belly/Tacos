@@ -9,7 +9,7 @@ const PORT = process.env["PORT"] ?? 3000;
 
 // Heroku below:
 
-app.listen(process.env.PORT);
+// app.listen(process.env.PORT);
 
 let port = process.env.PORT;
 if (port === null || port == "") {
