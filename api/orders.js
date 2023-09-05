@@ -28,7 +28,7 @@ router.get("/", async (req, res, next) => {
 // POST /api/orders
 router.post("/", requireUser, async (req, res, next) => {
   const { id } = req.user;
-  const { isComplete, total, order_date, productsId, cartId } = req.body;
+  const { isComplete, total, order_date, userId, productId } = req.body;
 
   try {
     const userOrderId = id;
@@ -36,9 +36,8 @@ router.post("/", requireUser, async (req, res, next) => {
       isComplete,
       total,
       order_date,
-      userOrderId,
-      productsId,
-      cartId,
+      userId,
+      productId,
     });
     res.send(addOrder);
   } catch ({ name, message }) {

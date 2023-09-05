@@ -1,23 +1,23 @@
 const client = require("./client");
 
 async function createReview({
-  userId,
-  productId,
   rating,
   comment,
   review_date,
+  userId,
+  productId,
 }) {
   try {
     const {
       rows: [review],
     } = await client.query(
       `
-            INSERT INTO reviews( "userId", "productId", rating, comment, review_date)
+            INSERT INTO reviews(rating, comment, review_date, "userId", "productId")
             VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT ("userId", "productId")
+            ON CONFLICT ("userId", "productId") DO NOTHING
             RETURNING *;
      `,
-      [userId, productId, rating, comment, review_date]
+      [rating, comment, review_date, userId, productId]
     );
 
     if (!review) {
