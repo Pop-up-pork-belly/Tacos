@@ -7,9 +7,8 @@ import { Elements } from "@stripe/react-stripe-js";
 
 import {
   Navbar,
-  // Loading,
   Register,
-  // Login,
+  Login,
   Profile,
   Homepage,
   Products,
@@ -17,8 +16,6 @@ import {
   AdminDashboard,
   Cart
 } from "./components";
-
-// import Products from "./components/Products";
 
 const stripePromise = loadStripe('pk_test_51NkzIOAVE3vEHYrbJdPRjQRMIxyakUy1R7YDGROCugM5T2Idi6GedvBcK8BZcW3Qu1wGNFz2YS2JUUs8wJsADbjk00GSSnTZbi')
 const App = () => {
@@ -35,15 +32,14 @@ const App = () => {
         <Navbar token={token} setToken={setToken} />
         {/* <SearchBar /> */}
         <Routes>
-          {/* <Route
+          <Route
             path="/Register"
             element={<Register setToken={setToken} setLoading={setLoading} />}
-          /> */}
-          {/* <Route path="/Search" element={<Search />} />
+          />
           <Route
             path="/Login"
             element={<Login setToken={setToken} setLoading={setLoading} />}
-          /> */}
+          />
           <Route path="/Admin" element ={<AdminDashboard />} />
           <Route path="/Cart" element ={<Cart />} />
           <Route path="/Profile" element={<Profile />} />
