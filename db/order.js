@@ -1,24 +1,24 @@
 const client = require("./client");
-const { attachProductsToOrders } = require("./products");
+const { attachProductsToOrders } = require("./product");
 
 async function createOrder({
   isComplete,
   total,
   order_date,
   userId,
-  productsId,
+  productId,
 }) {
   try {
     const {
       rows: [order],
     } = await client.query(
       `
-       INSERT INTO orders( isComplete, total, order_date, userOrderId, productsId, cartId )
+       INSERT INTO orders("isComplete", total, order_date, "userId", "productId")
        VALUES($1, $2, $3, $4, $5)
-       ON CONFLICT ("userId", "productsId", "cartId") DO NOTHING
+       ON CONFLICT ("userId", "productId") DO NOTHING
        RETURNING *;
         `,
-      [isComplete, total, order_date, userOrderId, productsId, cartId]
+      [isComplete, total, order_date, userId, productId]
     );
 
     return order;

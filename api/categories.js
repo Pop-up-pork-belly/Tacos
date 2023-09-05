@@ -6,7 +6,6 @@ const {
   createCategory,
   getAllCategories,
   getCategoryById,
-  getCategoryByProductId,
   updateCategory,
   deleteCategory,
   attachProductsToCategories,
@@ -29,12 +28,11 @@ router.get("/", async (req, res, next) => {
 // POST /api/categories
 router.post("/", isAdmin, async (req, res, next) => {
   const { id } = req.user;
-  const { name, productId } = req.body;
+  const { name } = req.body;
 
   try {
     const addCategory = await createCategory({
       name,
-      productId,
     });
     res.send(addCategory);
   } catch ({ name, message }) {
@@ -46,7 +44,7 @@ router.post("/", isAdmin, async (req, res, next) => {
 router.patch("/:categoryId", isAdmin, async (req, res, next) => {
   const { categoryId } = req.params;
   const { id } = req.user;
-  const { name, productId } = req.body;
+  const { name } = req.body;
 
   try {
     const theCategory = await getCategoryById(categoryId);

@@ -9,7 +9,7 @@ const {
   getReviewByProductId,
   deleteReview,
   getReviewByUserId,
-} = require("../db/reviews");
+} = require("../db");
 
 // GET /api/reviews
 router.get("/", async (req, res, next) => {
@@ -48,14 +48,14 @@ router.get("/:productId/:reviewId", async (req, res, next) => {
 //create review
 router.post("/:reviewId", async (req, res, next) => {
   try {
-    const { userId, productId, rating, comment, review_date } = req.body;
+    const { rating, comment, review_date, userId, productId } = req.body;
 
     const review = await createReview({
-      userId,
-      productId,
       rating,
       comment,
       review_date,
+      userId,
+      productId,
     });
 
     res.status(201).json({ message: "review created successfully" });

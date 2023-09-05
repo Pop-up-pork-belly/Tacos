@@ -109,7 +109,7 @@ async function updateUser({ username, password, email, isAdmin }) {
     } = await client.query(
       `
       UPDATE users
-      SET "userman" = $1, "password" = $2, "email" = $3, AND "isAdmin" = $4
+      SET "username" = $1, "password" = $2, "email" = $3, AND "isAdmin" = $4
       RETURNING *;
       `,
       [username, password, email, isAdmin]
@@ -130,7 +130,7 @@ async function destroyUser(id) {
     await client.query(
       `
       DELETE FROM reviews
-      WHERE "reviewId"=$1
+      WHERE id=$1
       RETURNING *;
       `,
       [id]
@@ -138,7 +138,7 @@ async function destroyUser(id) {
     await client.query(
       `
       DELETE FROM orders
-      WHERE orderId=$1
+      WHERE id=$1
       RETURNING *;
       `,
       [id]

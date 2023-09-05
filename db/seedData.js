@@ -1,17 +1,20 @@
-const { createUser } = require("./users");
 const client = require("./client");
 const { faker } = require("@faker-js/faker");
-const { createProducts } = require("./products");
-const { createOrder } = require("./orders");
+const { createUser } = require("./user");
+const { createCategory } = require("./category");
+const { createProducts } = require("./product");
+const { createReview } = require("./review");
+const { createOrder } = require("./order");
 
 async function dropTables() {
   try {
     console.log("Dropping Tables...");
     await client.query(`
+    DROP TABLE IF EXISTS carts CASCADE;
     DROP TABLE IF EXISTS reviews CASCADE;
     DROP TABLE IF EXISTS orders CASCADE;
     DROP TABLE IF EXISTS products CASCADE;
-    DROP TABLE IF EXISTS product_categories CASCADE;
+    DROP TABLE IF EXISTS categories CASCADE;
     DROP TABLE IF EXISTS users;
 `);
   } catch (error) {
@@ -25,14 +28,16 @@ async function createTables() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS users(
         id SERIAL PRIMARY KEY,
-        username VARCHAR(225) UNIQUE NOT NULL,
+        username VARCHAR(225) NOT NULL,
         password VARCHAR(225) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) NOT NULL,
         "isAdmin" BOOLEAN DEFAULT false,
-        "stripeId" VARCHAR(255) NOT NULL,
-        "reviewId" INTEGER REFERENCES reviews(id),
-        "orderId" INTEGER REFERENCES orders(id),
-        UNIQUE("stripeId", "reviewsId", "ordersId")
+        UNIQUE(username, email)
+      );
+
+      CREATE TABLE IF NOT EXISTS categories(
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS products(
@@ -42,16 +47,8 @@ async function createTables() {
         price INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
         image BYTEA,
-        "categoryId" INTEGER REFERENCES product_categories(id),
-        "cartId" INTEGER REFERENCES carts(id),
-        UNIQUE("categoryId", "cartId")
-      );
-
-      CREATE TABLE IF NOT EXISTS categories(
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) UNIQUE NOT NULL,
-        "productId" INTEGER REFERENCES products(id),
-        UNIQUE("productId")
+        "categoryId" INTEGER REFERENCES categories(id),
+        UNIQUE("categoryId")
       );
         
       CREATE TABLE IF NOT EXISTS reviews(
@@ -69,17 +66,17 @@ async function createTables() {
         "isComplete" BOOLEAN DEFAULT false,
         total INTEGER NOT NULL,
         order_date DATE DEFAULT CURRENT_DATE,
-        "userOrderId" INTEGER REFERENCES users(id),
+        "userId" INTEGER REFERENCES users(id),
         "productId" INTEGER REFERENCES products(id),
-        "cartId" INTEGER REFERENCES carts(id),
-        UNIQUE("userId", "productsId", "cartId")
+        UNIQUE("userId", "productId")
       );
             
-      CREATE TABLE IF NOT EXISTS carts(
+      CREATE TABLE IF NOT EXISTS orderProducts(
         id SERIAL PRIMARY KEY,
         quantity INTEGER NOT NULL,
         "userId" INTEGER REFERENCES users(id),
         "orderId" INTEGER REFERENCES orders(id),
+        "productId" INTEGER REFERENCES products(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE("userId", "orderId", "productId")
       );
@@ -95,124 +92,44 @@ async function createInitialUsers() {
   try {
     const usersToCreate = [
       {
-        id: 1,
         username: "eddiasde",
         password: "12312313fafsadfas",
         email: "ed@ex123afmple.com",
         isAdmin: false,
-        stripeId: "1",
-        reviewsId: 1,
-        ordersId: 1,
-      },
-      {
-        username: "eddiasde",
-        password: "12312313fafsadfas",
-        email: "ed@ex123afmple.com",
-        isAdmin: false,
-        stripeId: "2",
-        reviewsId: 2,
-        ordersId: 2,
       },
       {
         username: "yoasdooo",
         password: "123adsfasd",
         email: "ed1a321sdasdf@asdexamfasfpsle.com",
         isAdmin: false,
-        stripeId: "3",
-        reviewsId: 3,
-        ordersId: 3,
       },
       {
         username: "d3reasw",
         password: "supadfa",
         email: "ed121233@eadxghample.com",
         isAdmin: false,
-        stripeId: "4",
-        reviewsId: 4,
-        ordersId: 4,
       },
       {
         username: "h3arsasdhil",
         password: "123asdf",
         email: "ed12asd33asd@exasmfple.com",
         isAdmin: false,
-        stripeId: "5",
-        reviewsId: 5,
-        ordersId: 5,
       },
       {
         username: "TESTUSER1",
         password: "abcd1234",
         email: "testuser1@gmail.com",
         isAdmin: false,
-        stripeId: "6",
-        reviewsId: 6,
-        ordersId: 6,
       },
       {
         username: "TESTUSER2",
         password: "abcd1234",
         email: "testuser2@gmail.com",
         isAdmin: true,
-        stripeId: "7",
-        reviewsId: 7,
-        ordersId: 7,
       },
     ];
-    const users = await Promise.all(usersToCreate.map(createUser));
-    console.log("users created:", users);
-  } catch (error) {
-    console.error("error");
-  }
-}
-
-async function createInitialProducts() {
-  console.log("Creating Products...");
-  try {
-    const productsToCreate = [
-      {
-        id: 1,
-        name: "NRG Tenz shirt",
-        price: 25,
-        image: "https://placehold.co/300x400",
-        quantity: 1,
-        cartId: 1,
-      },
-      {
-        id: 2,
-        name: "Cloud9 shirt",
-        price: 20,
-        image: "https://placehold.co/600x400",
-        quantity: 1,
-        cartId: 2,
-      },
-      {
-        id: 3,
-        name: "Party shirt",
-        price: 15,
-        image: "https://placehold.co/200x200",
-        quantity: 1,
-        cartId: 1,
-      },
-      {
-        id: 4,
-        name: "Esports shirt",
-        price: 12,
-        image: "https://placehold.co/300x300",
-        quantity: 1,
-        cartId: 3,
-      },
-      {
-        id: 5,
-        name: "FRENCHFRIES shirt",
-        price: 30,
-        image: "https://placehold.co/600x400",
-        quantity: 1,
-        cartId: 4,
-      },
-    ];
-    const products = await Promise.all(productsToCreate.map(createProducts));
-    console.log("products created:", products);
+    const newUsers = await Promise.all(usersToCreate.map(createUser));
+    console.log("users created:", newUsers);
   } catch (error) {
     console.error("error");
   }
@@ -223,35 +140,77 @@ async function createInitialProductCategory() {
   try {
     const productCategoryToCreate = [
       {
-        id: 1,
-        category_name: "NRG Tenz",
-        productId: "1",
+        name: "NRG Tenz",
       },
       {
-        id: 2,
-        category_name: "Cloud9 Tenz",
-        productId: "2",
+        name: "Cloud9 Tenz",
       },
       {
-        id: 3,
-        category_name: "Party Tenz",
-        productId: "3",
+        name: "Party Tenz",
       },
       {
-        id: 4,
-        category_name: "Esports Tenz",
-        productId: "4",
+        name: "Esports Tenz",
       },
       {
-        id: 5,
-        category_name: "FRENCHFRIES Tenz",
-        productId: "5",
+        name: "FRENCHFRIES Tenz",
       },
     ];
     const productCategory = await Promise.all(
-      productCategoryToCreate.map(createProductCategoryInfo)
+      productCategoryToCreate.map(createCategory)
     );
     console.log("Product Category created:", productCategory);
+  } catch (error) {
+    console.error("error");
+  }
+}
+
+async function createInitialProducts() {
+  console.log("Creating Products...");
+  try {
+    const productsToCreate = [
+      {
+        name: "NRG Tenz shirt",
+        description: "Blahblahblahbalhbalabhlab",
+        price: 25,
+        quantity: 1,
+        image: "https://placehold.co/300x400",
+        categoryId: 1,
+      },
+      {
+        name: "Cloud9 shirt",
+        description: "djwiladjiwlajdijwaldjwilajdlw",
+        price: 20,
+        quantity: 1,
+        image: "https://placehold.co/600x400",
+        categoryId: 2,
+      },
+      {
+        name: "Party shirt",
+        description: "SO ON SO FORTH PARTY",
+        price: 15,
+        quantity: 1,
+        image: "https://placehold.co/200x200",
+        categoryId: 3,
+      },
+      {
+        name: "Esports shirt",
+        description: "HAPPY ESPORTS",
+        price: 12,
+        quantity: 1,
+        image: "https://placehold.co/300x300",
+        categoryId: 4,
+      },
+      {
+        name: "FRENCHFRIES shirt",
+        description: "FRENCH FRIES",
+        price: 30,
+        quantity: 1,
+        image: "https://placehold.co/600x400",
+        categoryId: 5,
+      },
+    ];
+    const products = await Promise.all(productsToCreate.map(createProducts));
+    console.log("products created:", products);
   } catch (error) {
     console.error("error");
   }
@@ -262,31 +221,27 @@ async function createInitialReview() {
   try {
     const reviewToCreate = [
       {
-        id: 1,
         rating: 9,
         comment: "This is an amazing product",
         userId: 1,
         productId: 1,
       },
       {
-        id: 2,
         rating: 2,
         comment: "This product SUCKS IM SO UPSET",
         userId: 2,
         productId: 2,
       },
       {
-        id: 6,
         rating: 7,
         comment: "It definitely could be better, but I like it",
         userId: 6,
         productId: 4,
       },
       {
-        id: 7,
         rating: 9,
         comment: "My store is amazing and so is this product",
-        userId: 7,
+        userId: 5,
         productId: 5,
       },
     ];
@@ -303,37 +258,28 @@ async function createInitialOrder() {
   try {
     const orderToCreate = [
       {
-        id: 1,
         isComplete: false,
         total: 50.0,
         userId: 1,
         productId: 1,
-        productId: 2,
-        productId: 4,
       },
       {
-        id: 2,
         isComplete: true,
         total: 45.0,
         userId: 3,
         productId: 2,
-        productId: 3,
       },
       {
-        id: 3,
         isComplete: true,
         total: 20.0,
         userId: 6,
         productId: 2,
       },
       {
-        id: 4,
         isComplete: false,
         total: 50.0,
-        userId: 7,
+        userId: 5,
         productId: 2,
-        productId: 3,
-        productId: 4,
       },
     ];
 
@@ -382,8 +328,9 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    await createInitialProducts();
     await createInitialProductCategory();
+    await createInitialProducts();
+    await createInitialReview();
     await createInitialOrder();
     await createInitialCart();
   } catch (error) {
