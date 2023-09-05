@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { loadStripe } from '@stripe/stripe-js';
-
+import { Elements } from "@stripe/react-stripe-js";
 
 
 import {
@@ -14,16 +14,17 @@ import {
   Homepage,
   Products,
   Footer, 
-  AdminDashboard
+  AdminDashboard,
+  Cart
 } from "./components";
 
 // import Products from "./components/Products";
 
-
+const stripePromise = loadStripe('pk_test_51NkzIOAVE3vEHYrbJdPRjQRMIxyakUy1R7YDGROCugM5T2Idi6GedvBcK8BZcW3Qu1wGNFz2YS2JUUs8wJsADbjk00GSSnTZbi')
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const stripe = loadStripe('pk_test_51NkzIOAVE3vEHYrbJdPRjQRMIxyakUy1R7YDGROCugM5T2Idi6GedvBcK8BZcW3Qu1wGNFz2YS2JUUs8wJsADbjk00GSSnTZbi')
+  
 
   useEffect(() => {
     localStorage.setItem("token", token);
@@ -44,6 +45,7 @@ const App = () => {
             element={<Login setToken={setToken} setLoading={setLoading} />}
           /> */}
           <Route path="/Admin" element ={<AdminDashboard />} />
+          <Route path="/Cart" element ={<Cart />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/" element={<Homepage setLoading={setLoading} />} />
           <Route path="/Products" element={<Products setLoading={setLoading} />} />
@@ -54,5 +56,5 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App/>, document.getElementById("app"));
+ReactDOM.render(  <Elements stripe={stripePromise}><App/> </Elements>, document.getElementById("app"));
 
