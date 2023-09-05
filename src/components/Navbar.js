@@ -6,6 +6,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { IconButton } from "@mui/joy";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Navbar = ({ token, setToken }) => {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Navbar = ({ token, setToken }) => {
             Products
           </Button>
 
+            {/* only admin can view this tab (come back ) */}
           <Button
             component={RouterLink}
             to="/Admin"
@@ -90,7 +93,15 @@ const Navbar = ({ token, setToken }) => {
               Logout
             </Button>
           ) : null}
-          
+
+            <Button
+            component={RouterLink}
+            to="/cart"
+            color="inherit"
+            sx={{ marginRight: 2 }}
+          >
+            <ShoppingCartIcon />
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>
