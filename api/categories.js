@@ -91,24 +91,4 @@ router.delete("/:categoryId", isAdmin, async (req, res, next) => {
   }
 });
 
-// GET /category/:productId
-router.get("/order/:productId", async (req, res, next) => {
-  const { productId } = req.params;
-
-  try {
-    const category = await getCategoryByProductId(productId);
-    if (category) {
-      res.send(category);
-    } else {
-      res.send({
-        error: "DeleteError",
-        name: "Can't find category by user Id",
-        message: `${userId}'s category not found.`,
-      });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
-  }
-});
-
 module.exports = router;
