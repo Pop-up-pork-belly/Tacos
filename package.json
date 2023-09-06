@@ -10,6 +10,7 @@
     "build": "next build",
     "start-prisma": "next start-prisma",
     "lint": "next lint",
+    "prisma:reset": "prisma migrate reset --force",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
@@ -63,7 +64,6 @@
   "engines": {
     "node": "20.3.1"
   },
-
   "browserslist": {
     "production": [
       ">0.2%",

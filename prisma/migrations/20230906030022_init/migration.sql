@@ -13,6 +13,7 @@ CREATE TABLE "users" (
 CREATE TABLE "product" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
     "image" TEXT NOT NULL DEFAULT '',
     "price" INTEGER NOT NULL DEFAULT 0,
     "categoryId" INTEGER,
@@ -64,6 +65,9 @@ CREATE TABLE "order_product" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "product_category_name_key" ON "product_category"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "review_userId_productId_key" ON "review"("userId", "productId");
