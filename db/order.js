@@ -1,27 +1,27 @@
 const client = require("./client");
-const { attachProductsToOrders } = require("./products");
+const { attachProductsToOrders } = require("./product");
 
 async function createOrder({
-  userId,
-  productsId,
-  quantity,
+  isComplete,
   total,
   order_date,
+  userId,
+  productId,
 }) {
   try {
     const {
-      rows: [orders],
+      rows: [order],
     } = await client.query(
       `
-       INSERT INTO orders("userId", "productsId", quantity, total, order_date)
+       INSERT INTO orders("isComplete", total, order_date, "userId", "productId")
        VALUES($1, $2, $3, $4, $5)
-       ON CONFLICT ("userId", "productsId") DO NOTHING
+       ON CONFLICT ("userId", "productId") DO NOTHING
        RETURNING *;
         `,
-      [userId, productsId, quantity, total, order_date]
+      [isComplete, total, order_date, userId, productId]
     );
 
-    return orders;
+    return order;
   } catch (error) {
     console.error(error);
   }
@@ -49,7 +49,26 @@ async function getAllOrders() {
   }
 }
 
-async function getAllOrdersByUser({ userId }) {
+async function getOrderById(id) {
+  try {
+    const {
+      rows: [order],
+    } = await client.query(
+      `
+          SELECT *
+          FROM orders
+          WHERE id=$1;
+      `,
+      [id]
+    );
+
+    return order;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getAllOrdersByUserId({ userId }) {
   try {
     const { rows: orders = [] } = await client.query(`
       SELECT orders.*; users.id AS "userId"
@@ -73,31 +92,54 @@ async function getAllOrdersByUser({ userId }) {
   }
 }
 
-async function updateOrder(productsId, quantity, total) {
+// async function updateOrder1(productsId, quantity, total) {
+//   try {
+//     const {
+//       rows: [updatedOrder],
+//     } = await client.query(
+//       `
+//     UPDATE orders
+//     SET "productId" = $1, "quantity" = $2, AND "total" = $3
+//     RETURNING *;
+//     `,
+//       [productsId, quantity, total]
+//     );
+
+//     for (const order of orders) {
+//       const products = await attachProductsToOrders(order);
+//       order.products = products;
+//     }
+
+//     if (!updatedOrder) {
+//       throw Error;
+//     } else {
+//       return updatedOrder;
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+async function updateOrder({ id, ...fields }) {
+  const updateString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+
   try {
-    const {
-      rows: [updatedOrder],
-    } = await client.query(
-      `
-    UPDATE orders
-    SET "productId" = $1, "quantity" = $2, AND "total" = $3
-    RETURNING *;
-    `,
-      [productsId, quantity, total]
-    );
-
-    for (const order of orders) {
-      const products = await attachProductsToOrders(order);
-      order.products = products;
+    if (updateString.length > 0) {
+      await client.query(
+        `
+      UPDATE orders
+      SET ${updateString}
+      WHERE id=${id}
+      RETURNING *;
+      `,
+        Object.values(fields)
+      );
     }
-
-    if (!updatedOrder) {
-      throw Error;
-    } else {
-      return updatedOrder;
-    }
+    return await getOrderById(id);
   } catch (error) {
-    console.error(error);
+    throw new Error("Could not update Routine");
   }
 }
 
@@ -134,9 +176,9 @@ async function deleteOrder(id) {
 
 module.exports = {
   createOrder,
-  // getOrderById,
+  getOrderById,
   getAllOrders,
-  getAllOrdersByUser,
+  getAllOrdersByUserId,
   updateOrder,
   deleteOrder,
 };
