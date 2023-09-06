@@ -1,5 +1,4 @@
 const client = require("./client");
-const { faker } = require("@faker-js/faker");
 const { createUser } = require("./user");
 const { createCategory } = require("./category");
 const { createProducts } = require("./product");
@@ -15,7 +14,7 @@ async function dropTables() {
     DROP TABLE IF EXISTS orders CASCADE;
     DROP TABLE IF EXISTS products CASCADE;
     DROP TABLE IF EXISTS categories CASCADE;
-    DROP TABLE IF EXISTS users;
+    DROP TABLE IF EXISTS users CASCADE;
 `);
   } catch (error) {
     console.error("Error dropping tables:", error.message);
