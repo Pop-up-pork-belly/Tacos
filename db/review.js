@@ -10,6 +10,20 @@ const getReview = async (id) => {
     where: {
       id,
     },
+    include: {
+      user: true,
+      products: true,
+    },
+  });
+};
+
+const getReviews = async () => {
+  // TODO Filter
+  return prisma.review.findMany({
+    include: {
+      user: true,
+      products: true,
+    },
   });
 };
 
@@ -21,6 +35,10 @@ const createReview = async (data) => {
   return prisma.review.create({
     data: {
       ...data,
+    },
+    include: {
+      user: true,
+      products: true,
     },
   });
 };
@@ -36,6 +54,10 @@ const updateReview = async (id, data) => {
     },
     data: {
       ...data,
+    },
+    include: {
+      user: true,
+      products: true,
     },
   });
 };
@@ -54,6 +76,7 @@ const deleteReview = async (id) => {
 
 module.exports = {
   getReview,
+  getReviews,
   createReview,
   updateReview,
   deleteReview,

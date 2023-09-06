@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { requireUser } = require("./utils.js");
+const { requireUser, isAdmin } = require("./utils.js");
 const {
   login,
   register,
@@ -11,12 +11,13 @@ const {
   updateUser,
   getOrders,
   getCart,
+  deleteUser,
 } = require("../db");
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
   console.log("req.body: ", req.body);
-  const { password, email } = req.body;
+  const { email, password } = req.body;
   try {
     const { user, token } = await register(email, password);
     res.send({
@@ -111,6 +112,18 @@ router.patch("/:id", requireUser, async (req, res, next) => {
   }
 });
 
+// DELETE /api/users/:id
+router.delete("/:id", isAdmin, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    await deleteUser(id);
+
+    res.send({ message: "User deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/users/:id/cart
 router.get("/:id/cart", requireUser, async (req, res, next) => {
   const { id } = req.params;
@@ -123,3 +136,5 @@ router.get("/:id/cart", requireUser, async (req, res, next) => {
     console.error(error);
   }
 });
+
+module.exports = router;

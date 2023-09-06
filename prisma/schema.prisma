@@ -26,6 +26,7 @@ model User {
 model Product {
   id    Int    @id @default(autoincrement())
   name  String @default("")
+  description String @default("")
   image String @default("")
   price Int    @default(0)
 
@@ -40,7 +41,7 @@ model Product {
 
 model ProductCategory {
   id   Int    @id @default(autoincrement())
-  name String @default("")
+  name String @default("") @unique
 
   products Product[]
 

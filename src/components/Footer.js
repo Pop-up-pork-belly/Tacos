@@ -1,15 +1,22 @@
 import React from "react";
+import { Box, Typography } from "@mui/joy";
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
   return (
     <div className="footer">
-      <p>&copy;{currentYear} Fitness Tracker</p>
-      <p>
-        Developers:
-        <a className="developers" target="_blank">
-          Drew, Eduardo, Dominque & Harshil
-        </a>
-      </p>
+      <Box p={6} mt={4} bgcolor="background.paper" component="footer">
+        <Typography variant="h6" align="center" gutterBottom>
+          E-Sports Collections
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          color="text.secondary"
+          component="p"
+        ></Typography>
+        <Typography variant="body2" color="text.secondary" align="center">
+          {"Copyright © "}
+        </Typography>
+      </Box>
     </div>
   );
 };

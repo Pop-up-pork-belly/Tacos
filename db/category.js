@@ -6,16 +6,23 @@ const getCategory = async (id) => {
     throw new Error("Missing category data");
   }
 
-  return prisma.category.findUnique({
+  return prisma.productCategory.findUnique({
     where: {
       id,
+    },
+    include: {
+      products: true,
     },
   });
 };
 
 const getCategories = async () => {
   // TODO Filter
-  return prisma.category.findMany();
+  return prisma.productCategory.findMany({
+    include: {
+      products: true,
+    },
+  });
 };
 
 const createCategory = async (data) => {
@@ -23,9 +30,12 @@ const createCategory = async (data) => {
     throw new Error("Missing category data");
   }
 
-  return prisma.category.create({
+  return prisma.productCategory.create({
     data: {
       ...data,
+    },
+    include: {
+      products: true,
     },
   });
 };
@@ -35,12 +45,15 @@ const updateCategory = async (id, data) => {
     throw new Error("Missing category data");
   }
 
-  return prisma.category.update({
+  return prisma.productCategory.update({
     where: {
       id,
     },
     data: {
       ...data,
+    },
+    include: {
+      products: true,
     },
   });
 };
@@ -50,7 +63,7 @@ const deleteCategory = async (id) => {
     throw new Error("Missing category data");
   }
 
-  return prisma.category.delete({
+  return prisma.productCategory.delete({
     where: {
       id,
     },

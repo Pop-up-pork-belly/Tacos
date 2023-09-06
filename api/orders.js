@@ -4,6 +4,7 @@ const { requireUser } = require("./utils.js");
 
 const {
   getOrders,
+  getOrder,
   updateOrder,
   deleteOrder,
   removeOrderProduct,
@@ -16,6 +17,17 @@ router.get("/", async (req, res, next) => {
     const orders = await getOrders();
 
     res.send(orders);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/orders/:id
+router.get("/", async (req, res, next) => {
+  try {
+    const order = await getOrder(id, req.body);
+
+    res.send(order);
   } catch (error) {
     next(error);
   }
@@ -70,3 +82,5 @@ router.delete("/:id", requireUser, async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports = router;

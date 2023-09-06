@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getReview,
+  getReviews,
   updateReview,
   createReview,
   deleteReview,
@@ -30,6 +31,18 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// GET /api/reviews
+router.get("/", async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const reviews = await getReviews(req.body);
+
+    res.send(reviews);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // PATCH /api/reviews/:id
 router.patch("/:id", async (req, res, next) => {
   const { id } = req.params;
@@ -53,3 +66,5 @@ router.patch("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports = router;

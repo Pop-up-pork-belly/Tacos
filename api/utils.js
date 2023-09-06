@@ -1,6 +1,6 @@
 async function requireUser(req, res, next) {
- // keep commented out to test API first before bringing back.
- 
+  // keep commented out to test API first before bringing back.
+
   // if (!req.user) {
   //   // console.log(req.user);
   //   res.status(403).json({
@@ -9,8 +9,8 @@ async function requireUser(req, res, next) {
   //     name: "UnauthorizedError",
   //   });
   // } else {
-    next();
-  }
+  next();
+  // }
 }
 
 async function isAdmin(req, res, next) {

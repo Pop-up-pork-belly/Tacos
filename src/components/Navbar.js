@@ -1,6 +1,13 @@
 import * as React from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Link from "@mui/joy/Link";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { IconButton } from "@mui/joy";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Navbar = ({ token, setToken }) => {
   const navigate = useNavigate();
@@ -13,137 +20,93 @@ const Navbar = ({ token, setToken }) => {
       navigate("/login");
     }
   };
+  
 
   return (
-    <div id="mainNav">
-      <div id="navbartitle">
-        E-Sports Collections
-        <div id="navbarlink">
-          <Link
+    <AppBar classname="nav-bar" position="static" sx={{ marginBottom: '20px', backgroundColor: 'black' }}>
+      <Toolbar>
+        <Typography variant="h6" component="div" >
+          E-Sports Collections
+        </Typography>
+        <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center" }}>
+
+          <Button
             component={RouterLink}
             to="/"
-            underline="hover"
-            color="darkred"
-            sx={{
-              borderRadius: 1,
-              boxShadow: 10,
-              padding: 1,
-              border: 2,
-              borderColor: "black",
-              ":hover": {
-                bgcolor: "black",
-                color: "white",
-              },
-            }}
+            color="inherit"
+            sx={{ marginRight: 2 }}
           >
-            Routines
-          </Link>
-          <Link
+            Home
+          </Button>
+
+          <Button
             component={RouterLink}
-            to="/activities"
-            underline="hover"
-            color="darkred"
-            sx={{
-              borderRadius: 1,
-              boxShadow: 10,
-              padding: 1,
-              border: 2,
-              borderColor: "black",
-              ":hover": {
-                bgcolor: "black",
-                color: "white",
-              },
-            }}
+            to="/Products"
+            color="inherit"
+            sx={{ marginRight: 2 }}
           >
-            Activities
-          </Link>
+            Products
+          </Button>
+
+            {/* only admin can view this tab (come back ) */}
+          <Button
+            component={RouterLink}
+            to="/Admin"
+            color="inherit"
+            sx={{ marginRight: 2 }}
+          >
+            Admin
+          </Button>
+          
           {token ? (
-            <Link
+            <Button
               component={RouterLink}
-              to="/myroutines"
-              underline="hover"
-              color="darkblue"
-              sx={{
-                borderRadius: 1,
-                boxShadow: 10,
-                padding: 1,
-                border: 2,
-                borderColor: "black",
-                ":hover": {
-                  bgcolor: "black",
-                  color: "white",
-                },
-              }}
+              to="/Profile"
+              color="inherit"
+              sx={{ marginRight: 2 }}
             >
-              My Routines
-            </Link>
+              Teams
+            </Button>
           ) : null}
           {!token ? (
-            <Link
-              component={RouterLink}
-              to="/login"
-              underline="hover"
-              color="darkblue"
-              sx={{
-                borderRadius: 1,
-                boxShadow: 10,
-                padding: 1,
-                border: 2,
-                borderColor: "black",
-                ":hover": {
-                  bgcolor: "black",
-                  color: "white",
-                },
-              }}
-            >
-              Login
-            </Link>
-          ) : null}
-          {!token ? (
-            <Link
-              component={RouterLink}
-              to="/register"
-              underline="hover"
-              color="darkblue"
-              sx={{
-                borderRadius: 1,
-                boxShadow: 10,
-                padding: 1,
-                border: 2,
-                borderColor: "black",
-                ":hover": {
-                  bgcolor: "black",
-                  color: "white",
-                },
-              }}
-            >
-              Register
-            </Link>
+            <>
+              <Button
+                component={RouterLink}
+                to="/login"
+                color="inherit"
+                sx={{ marginRight: 2 }}
+              >
+                Login
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/register"
+                color="inherit"
+                sx={{ marginRight: 2 }}
+              >
+                Register
+              </Button>
+            </>
           ) : null}
           {token ? (
-            <Link
-              id="logout"
-              onClick={logout}
-              underline="hover"
-              color="darkred"
-              sx={{
-                borderRadius: 1,
-                boxShadow: 10,
-                padding: 1,
-                border: 2,
-                borderColor: "black",
-                ":hover": {
-                  bgcolor: "black",
-                  color: "white",
-                },
-              }}
-            >
+            <Button onClick={logout} color="inherit">
               Logout
-            </Link>
+            </Button>
           ) : null}
-        </div>
-      </div>
-    </div>
+
+            <Button
+            component={RouterLink}
+            to="/cart"
+            color="inherit"
+            sx={{ marginRight: 2 }}
+          >
+            <ShoppingCartIcon />
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
+        
+    
   );
 };
 export default Navbar;

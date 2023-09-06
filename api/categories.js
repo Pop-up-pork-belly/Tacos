@@ -7,9 +7,10 @@ const {
   createCategory,
   deleteCategory,
 } = require("../db");
+const { isAdmin } = require("./utils.js");
 
-// POST /api/category
-router.post("/", async (req, res, next) => {
+// POST /api/categories
+router.post("/", isAdmin, async (req, res, next) => {
   try {
     const category = await createCategory(req.body);
 
@@ -19,7 +20,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// GET /api/category/:id
+// GET /api/categories/:id
 router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -43,8 +44,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// PATCH /api/category/:id
-router.patch("/:id", async (req, res, next) => {
+// PATCH /api/categories/:id
+router.patch("/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
   try {
     const category = await createCategory(req.body);
@@ -55,8 +56,8 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
-// DELETE /api/category/:id
-router.patch("/:id", async (req, res, next) => {
+// DELETE /api/categories/:id
+router.patch("/:id", isAdmin, async (req, res, next) => {
   const { id } = req.params;
   try {
     await deleteCategory(id, req.body);
@@ -66,3 +67,5 @@ router.patch("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports = router;

@@ -68,45 +68,226 @@ async function main() {
     },
   });
 
-  // Create Products
-  const Tenz = await prisma.product.upsert({
-    where: { id: 1 },
+  // Create Categories
+  const nrgTenz1 = await prisma.productCategory.upsert({
+    where: { name: "NRG Tenz" },
     update: {},
     create: {
       id: 1,
-      name: "NRG Tenz shirt",
-      price: 25,
-      image: "https://placehold.co/400x400",
+      name: "NRG Tenz",
     },
   });
-  const Faze = await prisma.product.upsert({
-    where: { id: 2 },
+
+  const cloud91 = await prisma.productCategory.upsert({
+    where: { name: "Cloud9" },
     update: {},
     create: {
       id: 2,
-      name: "FaZe shirt",
-      price: 30,
-      image: "https://placehold.co/400x400",
+      name: "Cloud9",
     },
   });
-  const Cloud9 = await prisma.product.upsert({
-    where: { id: 3 },
+
+  const party1 = await prisma.productCategory.upsert({
+    where: { name: "Party1" },
     update: {},
     create: {
       id: 3,
-      name: "Cloud-9 shirt",
-      price: 24.99,
-      image: "https://placehold.co/400x400",
+      name: "Party1",
     },
   });
 
-  // Create Categories
+  const eSports1 = await prisma.productCategory.upsert({
+    where: { name: "Esports" },
+    update: {},
+    create: {
+      id: 4,
+      name: "Esports",
+    },
+  });
 
-  // Create Orders
+  const frenchFries1 = await prisma.productCategory.upsert({
+    where: { name: "FRENCHFRIES" },
+    update: {},
+    create: {
+      id: 5,
+      name: "FRENCHFRIES",
+    },
+  });
 
   // Create Products
+  const tenzShirt = await prisma.product.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: "NRG Tenz shirt",
+      description: "Blahblahblahbalhbalabhlab",
+      price: 25,
+      image: "https://placehold.co/300x400",
+      categoryId: 1,
+    },
+  });
+  const cloud9Shirt = await prisma.product.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: "Cloud9 shirt",
+      description: "djwiladjiwlajdijwaldjwilajdlw",
+      price: 20,
+      image: "https://placehold.co/600x400",
+      categoryId: 2,
+    },
+  });
+  const partyShirt = await prisma.product.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: "Party shirt",
+      description: "SO ON SO FORTH PARTY",
+      price: 15,
+      image: "https://placehold.co/200x200",
+      categoryId: 3,
+    },
+  });
+  const eSportsShirt = await prisma.product.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: "Esports shirt",
+      description: "HAPPY ESPORTS",
+      price: 12,
+      image: "https://placehold.co/300x300",
+      categoryId: 4,
+    },
+  });
+  const frenchFriesShirt = await prisma.product.upsert({
+    where: { id: 5 },
+    update: {},
+    create: {
+      name: "FRENCHFRIES shirt",
+      description: "FRENCH FRIES",
+      price: 30,
+      image: "https://placehold.co/600x400",
+      categoryId: 5,
+    },
+  });
 
   // Create Reviews
+  const review1 = await prisma.review.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      rating: 9,
+      comment: "This is an amazing product",
+      userId: 1,
+      productId: 1,
+    },
+  });
+  const review2 = await prisma.review.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      rating: 2,
+      comment: "This product SUCKS IM SO UPSET",
+      userId: 2,
+      productId: 2,
+    },
+  });
+  const review3 = await prisma.review.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      rating: 7,
+      comment: "It definitely could be better, but I like it",
+      userId: 6,
+      productId: 4,
+    },
+  });
+  const review4 = await prisma.review.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      rating: 9,
+      comment: "My store is amazing and so is this product",
+      userId: 5,
+      productId: 5,
+    },
+  });
+
+  // Create Orders
+  const order1 = await prisma.order.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      isComplete: false,
+      total: 50.0,
+      userId: 1,
+    },
+  });
+  const order2 = await prisma.order.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      isComplete: true,
+      total: 45.0,
+      userId: 3,
+    },
+  });
+  const order3 = await prisma.order.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      isComplete: true,
+      total: 20.0,
+      userId: 6,
+    },
+  });
+  const order4 = await prisma.order.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      isComplete: false,
+      total: 50.0,
+      userId: 5,
+    },
+  });
+
+  // Create orderProducts
+  const order_Product1 = await prisma.orderProduct.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      quantity: 1,
+      orderId: 1,
+      productId: 1,
+    },
+  });
+  const order_Product2 = await prisma.orderProduct.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      quantity: 1,
+      orderId: 2,
+      productId: 4,
+    },
+  });
+  const order_Product3 = await prisma.orderProduct.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      quantity: 3,
+      orderId: 3,
+      productId: 3,
+    },
+  });
+  const order_Product4 = await prisma.orderProduct.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      quantity: 2,
+      orderId: 4,
+      productId: 2,
+    },
+  });
 }
 
 main()

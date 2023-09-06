@@ -61,4 +61,8 @@ router.use("/reviews", reviewsRouter);
 const usersRouter = require("./users");
 router.use("/users", usersRouter);
 
+// ROUTER: /api/categories
+const categoriesRouter = require("./categories");
+router.use("/categories", categoriesRouter);
+
 module.exports = router;

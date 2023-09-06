@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const {
-  createProducts,
-  getAllProducts,
+  getProducts,
+  createProduct,
   deleteProduct,
   updateProduct,
 } = require("../db");
@@ -14,7 +14,7 @@ router.post("/", isAdmin, async (req, res, next) => {
   try {
     const product = await createProduct(req.body);
 
-    res.send(product);
+    res.json(product);
   } catch (error) {
     console.error(error);
     next(error);
@@ -25,9 +25,9 @@ router.post("/", isAdmin, async (req, res, next) => {
 // GET /api/products
 router.get("/", async (req, res, next) => {
   try {
-    const product = getProducts();
+    const products = await getProducts();
 
-    res.send(product);
+    res.json(products);
   } catch (error) {
     next(error);
   }
@@ -40,7 +40,7 @@ router.patch("/:id", isAdmin, async (req, res, next) => {
   try {
     const product = await updateProduct(id, req.body);
 
-    res.send(product);
+    res.json(product);
   } catch (error) {
     next(error);
   }
@@ -58,3 +58,5 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports = router;
