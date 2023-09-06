@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db { 
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  password String  @default("")
+  email    String  @default("") @unique
+  isAdmin  Boolean @default(false) @map("is_admin")
+
+  stripeId String   @default("") @map("stripe_id")
+  reviews   Review[]
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id    Int    @id @default(autoincrement())
+  name  String @default("")
+  description String @default("")
+  image String @default("")
+  price Int    @default(0)
+
+  categoryId Int?
+  category   ProductCategory? @relation(fields: [categoryId], references: [id])
+
+  orderProducts OrderProduct[]
+  reviews        Review[]
+
+  @@map("product")
+}
+
+model ProductCategory {
+  id   Int    @id @default(autoincrement())
+  name String @default("") @unique
+
+  products Product[]
+
+  @@map("product_category")
+}
+
+model Review {
+  id      Int    @id @default(autoincrement())
+  rating  Int    @default(3)
+  comment String @default("")
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  reviewDate DateTime @default(now()) @updatedAt @map("review_date")
+
+  @@unique([userId, productId])
+  @@map("review")
+}
+
+model Order {
+  id               Int     @id @default(autoincrement())
+  isComplete       Boolean @default(false) @map("is_complete")
+  total            Int     @default(0)
+  stripeCheckoutId String  @default("") @map("stripe_checkout_id")
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  products OrderProduct[]
+
+  orderDate DateTime @default(now()) @updatedAt @map("order_date")
+
+  @@map("order")
+}
+
+model OrderProduct {
+  id       Int @id @default(autoincrement())
+  quantity Int @default(1)
+
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+  @@map("order_product")
+}

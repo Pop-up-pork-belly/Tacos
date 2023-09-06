@@ -3,6 +3,7 @@ const { localHostConnection } = require("../localhostconnect.js");
 
 const connectionString = localHostConnection || process.env.DATABASE_URL;
 
+
 const client = new Pool({
   connectionString,
   ssl:
