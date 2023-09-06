@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-
+// import { BASE_URL } from "./api";
 import { Container, Typography, TextField, Button, Grid } from "@mui/material";
 import { loginUser } from "../api/index";
-
 
 const Login = ({ token, setToken }) => {
   const [email, setEmail] = useState("");
@@ -14,9 +13,7 @@ const Login = ({ token, setToken }) => {
     const password = event.target.password.value;
 
     try {
-
       login(email, password);
-
 
       setEmail("");
       setPassword("");
@@ -32,14 +29,12 @@ const Login = ({ token, setToken }) => {
   };
 
   const login = async () => {
-
     const result = await loginUser(email, password);
 
     setToken(result.token);
     if (result.token) {
       localStorage.setItem("token", result.token);
       return result.token;
-
     } else {
       setError("Failed to login, please try again!");
       throw new Error("No Token");

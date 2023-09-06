@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 
 import {
@@ -124,72 +123,6 @@ const Products = ({}) => {
                       View
                     </Button>
                     <Button
-
-
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Grid,
-  Card,
-  CardActions,
-  CardContent,
-  Select,
-  MenuItem,
-  FormControl,
-  Input,
-  IconButton,
-} from "@mui/joy";
-import { AppBar, Toolbar, CardMedia, Paper } from "@mui/material";
-import Add from "@mui/icons-material/Add";
-import { Search } from "@mui/icons-material";
-
-const Products = ({}) => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const result = await fetch(`http://localhost:4000/api/products`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await result.json();
-
-      console.log(data);
-      setProducts(data);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  return (
-    <Box>
-      <AppBar position="static" sx={{ backgroundColor: "#272727" }}>
-        <Toolbar>
-          <FormControl sx={{ m: 2, minWidth: 150 }}>
-            <Select labelId="filter-label" id="filter" value="">
-              <MenuItem value="">
-                {" "}
-                <em>Choose a Team</em>
-              </MenuItem>
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="category1">Cloud 9</MenuItem>
-              <MenuItem value="category2">FaZe Clan</MenuItem>
-              <MenuItem value="category3">Sentinels</MenuItem>
-            </Select>
-          </FormControl>
-          <Paper
-            component="form"
-            sx={{ ml: 2, display: "flex", alignItems: "center" }}
-          >
                       size="md"
                       variant="soft"
                       color="neutral"
@@ -209,4 +142,3 @@ const Products = ({}) => {
 };
 
 export default Products;
-

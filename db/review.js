@@ -1,83 +1,125 @@
-const prismaClient = require("@prisma/client");
-const prisma = new prismaClient.PrismaClient();
+const client = require("./client");
 
-const getReview = async (id) => {
-  if (!id) {
-    throw new Error("Missing review data");
+async function createReview({
+  rating,
+  comment,
+  review_date,
+  userId,
+  productId,
+}) {
+  try {
+    const {
+      rows: [review],
+    } = await client.query(
+      `
+            INSERT INTO reviews(rating, comment, review_date, "userId", "productId")
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT ("userId", "productId") DO NOTHING
+            RETURNING *;
+     `,
+      [rating, comment, review_date, userId, productId]
+    );
+
+    if (!review) {
+      throw Error;
+    } else {
+      return review;
+    }
+  } catch (error) {
+    console.log(error);
   }
+}
 
-  return prisma.review.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      user: true,
-      products: true,
-    },
-  });
-};
+async function getAllReviews() {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT *
+      FROM reviews;
+      `
+    );
 
-const getReviews = async () => {
-  // TODO Filter
-  return prisma.review.findMany({
-    include: {
-      user: true,
-      products: true,
-    },
-  });
-};
-
-const createReview = async (data) => {
-  if (!data.name || !data.userId || !data.productId) {
-    throw new Error("Missing review data");
+    return rows;
+  } catch (error) {
+    console.error(error);
   }
+}
 
-  return prisma.review.create({
-    data: {
-      ...data,
-    },
-    include: {
-      user: true,
-      products: true,
-    },
-  });
-};
-
-const updateReview = async (id, data) => {
-  if (!id || !data) {
-    throw new Error("Missing review data");
+async function getReviewById(id) {
+  try {
+    const {
+      rows: [review],
+    } = await client.query(
+      `
+        SELECT * 
+        FROM reviews
+        WHERE id=$1;
+        `,
+      [id]
+    );
+    return review;
+  } catch (error) {
+    console.log(error);
   }
+}
 
-  return prisma.review.update({
-    where: {
-      id,
-    },
-    data: {
-      ...data,
-    },
-    include: {
-      user: true,
-      products: true,
-    },
-  });
-};
-
-const deleteReview = async (id) => {
-  if (!id) {
-    throw new Error("Missing review data");
+async function getReviewByProductId({ productId }) {
+  try {
+    const {
+      rows: [review],
+    } = await client.query(
+      `
+        SELECT * 
+        FROM reviews
+        where "productId"=$1;
+        `,
+      [productId]
+    );
+    return review;
+  } catch (error) {
+    console.log(error);
   }
+}
 
-  return prisma.review.delete({
-    where: {
-      id,
-    },
-  });
-};
+async function getReviewByUserId({ userId }) {
+  try {
+    const {
+      rows: [review],
+    } = await client.query(
+      `
+    SELECT * 
+    FROM reviews 
+    WHERE "userId"=$1;
+    `,
+      [userId]
+    );
+
+    return review;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteReview(id) {
+  try {
+    await client.query(
+      `
+    DELETE FROM reviews
+    WHERE id=$1
+    ;
+    `,
+      [id]
+    );
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 module.exports = {
-  getReview,
-  getReviews,
   createReview,
-  updateReview,
+  getAllReviews,
+  getReviewById,
+  getReviewByProductId,
+  getReviewByUserId,
   deleteReview,
 };

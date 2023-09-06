@@ -1,17 +1,13 @@
 const express = require("express");
 const router = express.Router();
-<<<<<<< HEAD
-=======
 const { requireUser, isAdmin } = require("./utils");
 
->>>>>>> Development
 const {
   getProducts,
   createProduct,
   deleteProduct,
   updateProduct,
 } = require("../db");
-const { isAdmin } = require("./utils.js");
 
 //create product(only admin can create product)
 // POST /api/products

@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const { getUser } = require("../db");
+const { getUserById } = require("../db");
 
 //ROUTER: Authorization for API
 
@@ -19,7 +19,7 @@ router.use(async (req, res, next) => {
     try {
       const { id } = jwt.verify(token, process.env.JWT_SECRET);
       if (id) {
-        req.user = await getUser(id);
+        req.user = await getUserById(id);
         next();
       } else if (!id) {
         next({ message: "JWT Verification Failed." });
@@ -45,9 +45,9 @@ router.get("/unknown", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// ROUTER: /api/orders
-const ordersRouter = require("./orders");
-router.use("/orders", ordersRouter);
+// ROUTER: /api/users
+const usersRouter = require("./users");
+router.use("/users", usersRouter);
 
 // ROUTER: /api/products
 const productsRouter = require("./products");
@@ -57,13 +57,9 @@ router.use("/products", productsRouter);
 const reviewsRouter = require("./reviews");
 router.use("/reviews", reviewsRouter);
 
-// ROUTER: /api/users
-const usersRouter = require("./users");
-router.use("/users", usersRouter);
-
-// ROUTER: /api/categories
-const categoriesRouter = require("./categories");
-router.use("/categories", categoriesRouter);
+// ROUTER: /api/orders
+const ordersRouter = require("./orders");
+router.use("/orders", ordersRouter);
 
 // ROUTER: /api/categories
 const categoriesRouter = require("./categories");
