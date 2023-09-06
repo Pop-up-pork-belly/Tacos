@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { IconButton } from "@mui/joy";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const Navbar = ({ token, setToken }) => {
   const navigate = useNavigate();
@@ -20,16 +20,18 @@ const Navbar = ({ token, setToken }) => {
       navigate("/login");
     }
   };
-  
 
   return (
-    <AppBar classname="nav-bar" position="static" sx={{ marginBottom: '20px', backgroundColor: 'black' }}>
+    <AppBar
+      className="nav-bar"
+      position="static"
+      sx={{ marginBottom: "20px", backgroundColor: "black" }}
+    >
       <Toolbar>
-        <Typography variant="h6" component="div" >
+        <Typography variant="h6" component="div">
           E-Sports Collections
         </Typography>
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center" }}>
-
           <Button
             component={RouterLink}
             to="/"
@@ -48,7 +50,7 @@ const Navbar = ({ token, setToken }) => {
             Products
           </Button>
 
-            {/* only admin can view this tab (come back ) */}
+          {/* only admin can view this tab (come back ) */}
           <Button
             component={RouterLink}
             to="/Admin"
@@ -57,7 +59,7 @@ const Navbar = ({ token, setToken }) => {
           >
             Admin
           </Button>
-          
+
           {token ? (
             <Button
               component={RouterLink}
@@ -94,7 +96,7 @@ const Navbar = ({ token, setToken }) => {
             </Button>
           ) : null}
 
-            <Button
+          <Button
             component={RouterLink}
             to="/cart"
             color="inherit"
@@ -105,8 +107,6 @@ const Navbar = ({ token, setToken }) => {
         </Box>
       </Toolbar>
     </AppBar>
-        
-    
   );
 };
 export default Navbar;

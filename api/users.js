@@ -5,45 +5,108 @@ const bcrypt = require("bcrypt");
 const { requireUser, isAdmin } = require("./utils");
 
 const {
-  login,
-  register,
+  createUser,
+  getAllUsers,
   getUser,
-  getUsers,
+  getUserById,
+  getUserByUsername,
   updateUser,
-  getOrders,
-  getCart,
-  deleteUser,
+  destroyUser,
+  getAllOrdersByUserId,
+  getOrderById,
+  getReviewByUserId,
 } = require("../db");
 
-// POST /api/users/register
-router.post("/register", async (req, res, next) => {
-  console.log("req.body: ", req.body);
-  const { email, password } = req.body;
+// GET /api/users
+router.get("/", async (req, res, next) => {
   try {
-    const { user, token } = await register(email, password);
-    res.send({
-      message: "Thank you for registering! :)",
-      token,
-      user,
-    });
+    const allUsers = await getAllUsers();
+    if (allUsers) {
+      res.send({ users: allUsers });
+    } else {
+      throw error;
+    }
   } catch (error) {
     next(error);
   }
 });
 
+// POST /api/users/register
+router.post("/register", async (req, res, next) => {
+  console.log("req.body: ", req.body);
+  const { username, password, email, isAdmin } = req.body;
+  const passwordMinLength = 8;
+  try {
+    const _user = await getUserByUsername(username);
+    if (_user) {
+      res.send({
+        name: "UserNameExistsError",
+        message: `User ${username} is already taken.`,
+      });
+    }
+    if (password.length < passwordMinLength) {
+      res.send({
+        name: "PasswordMustBe8CharactersError",
+        message: "Password Too Short!",
+      });
+    } else {
+      const user = await createUser({
+        username,
+        password,
+        email,
+        isAdmin,
+      });
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "2w",
+        }
+      );
+      res.send({
+        message: "Thank you for registering! :)",
+        token: "token",
+        user: {
+          id: user.id,
+          username,
+        },
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
 // POST /api/users/login
 router.post("/login", async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const { user, token } = await login(email, password);
+    const user = await getUser({ username, password });
+    if (user) {
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+        },
+        process.env.JWT_SECRET
+      );
 
-    res.send({
-      user,
-      token,
-      message: "You're logged in!",
-    });
-    console.log("YOU ARE LOGGED IN ");
+      res.send({
+        user: {
+          id: user.id,
+          username: username,
+        },
+
+        message: "You're logged in!",
+        token,
+      });
+      console.log("YOU ARE LOGGED IN ");
+    }
   } catch ({ name, message }) {
     console.log("Unable to log in");
     next({
@@ -53,21 +116,11 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// GET /api/users
-router.get("/", async (req, res, next) => {
-  try {
-    const users = await getUsers();
-    res.send(users);
-  } catch (error) {
-    next(error);
-  }
-});
-
 // GET /api/users/:id
 router.get("/:id", requireUser, async (req, res, next) => {
   const { id } = req.params;
   try {
-    const user = await getUser(id);
+    const user = await getUserById(id);
 
     res.send(user);
   } catch ({ name, message }) {
@@ -79,7 +132,7 @@ router.get("/:id", requireUser, async (req, res, next) => {
 router.get("/me", requireUser, async (req, res, next) => {
   const { id } = req.user;
   try {
-    const user = await getUser(id);
+    const user = await getUserById(id);
 
     res.send(user);
   } catch ({ name, message }) {
@@ -87,16 +140,61 @@ router.get("/me", requireUser, async (req, res, next) => {
   }
 });
 
-// GET /api/users/:id/orders
-router.get("/:id/orders", requireUser, async (req, res, next) => {
-  const { id } = req.params;
+// GET /api/users/profile
+router.get("/:username/profile", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
+  try {
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      res.send({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      res.send(currentUser);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+// GET /api/users/orders
+router.get("/:username/orders", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
 
   try {
-    const orders = await getOrders(id);
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      res.send({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      const ordersByUser = await getAllOrdersByUserId(currentUser.id);
+      res.send(ordersByUser);
+    }
+  } catch ({ name, message }) {
+    console.error({ name, message });
+  }
+});
 
-    res.send(orders);
-  } catch (error) {
-    console.error(error);
+// GET /api/users/reviews
+router.get("/:username/reviews", requireUser, async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      res.send({
+        name: "WrongProfileUser",
+        message: "You are not permitted to see this profile!",
+      });
+    } else {
+      const reviewsByUser = await getReviewByUserId(currentUser.id);
+      res.send(ordersByUser);
+    }
+  } catch ({ name, message }) {
+    console.error({ name, message });
   }
 });
 
@@ -113,15 +211,28 @@ router.patch("/:id", requireUser, async (req, res, next) => {
   }
 });
 
-// DELETE /api/users/:id
-router.delete("/:id", isAdmin, async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    await deleteUser(id);
+// DELETE /api/users/:userId
+router.delete("/:userId", requireUser, isAdmin, async (req, res, next) => {
+  const { userId } = req.params;
+  const { id } = req.user;
 
-    res.send({ message: "User deleted successfully" });
-  } catch (error) {
-    next(error);
+  try {
+    const theUser = await getUserById(userId);
+    if (theUser.id === id) {
+      const deleteUser = await destroyUser({
+        id: userId,
+      });
+
+      res.send(deleteUser);
+    } else {
+      res.status(403).send({
+        name: "403Error",
+        message: `User ${req.user.username} is not allowed to be deleted.`,
+        error: "Error",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
@@ -130,7 +241,7 @@ router.get("/:id/cart", requireUser, async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const cart = await getCart(id);
+    const cart = await getOrderById(id);
 
     res.send(cart);
   } catch (error) {
