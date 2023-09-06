@@ -1,31 +1,25 @@
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
+=======
 const { requireUser, isAdmin } = require("./utils");
 
+>>>>>>> Development
 const {
-  createProducts,
-  getAllProducts,
+  getProducts,
+  createProduct,
   deleteProduct,
   updateProduct,
 } = require("../db");
+const { isAdmin } = require("./utils.js");
 
 //create product(only admin can create product)
-
+// POST /api/products
 router.post("/", isAdmin, async (req, res, next) => {
   try {
-    const { name, description, price, quantity, categoryId, image } = req.body;
+    const product = await createProduct(req.body);
 
-    const product = await createProducts({
-      name,
-      description,
-      price,
-      quantity,
-      categoryId,
-      image,
-    });
-
-    res.status(201).json({ message: "Product created successfully" });
-    res.send(product);
+    res.json(product);
   } catch (error) {
     console.error(error);
     next(error);
@@ -33,38 +27,38 @@ router.post("/", isAdmin, async (req, res, next) => {
 });
 
 //get all the products
+// GET /api/products
 router.get("/", async (req, res, next) => {
   try {
-    const products = getAllProducts();
-    res.send(products);
-  } catch (error) {
-    next(error);
-  }
-});
+    const products = await getProducts();
 
-//delete product(only admin can delete products)
-router.delete("/:productId", isAdmin, async (req, res, next) => {
-  try {
-    const productId = req.params.productId;
-    await deleteProduct(productId);
-    res.json({ message: "Product deleted successfully" });
+    res.json(products);
   } catch (error) {
     next(error);
   }
 });
 
 //edit product
-router.patch("/:productId", isAdmin, async (req, res, next) => {
+// UPDATE /api/products/:id
+router.patch("/:id", isAdmin, async (req, res, next) => {
+  const { id } = req.params;
   try {
-    const productId = req.params.productId;
-    const updateProductFields = req.body;
+    const product = await updateProduct(id, req.body);
 
-    const updatedProduct = await updateProduct({
-      id: productId,
-      ...updateProductFields,
-    });
+    res.json(product);
+  } catch (error) {
+    next(error);
+  }
+});
 
-    res.json(updatedProduct);
+//delete product(only admin can delete products)
+// DELETE /api/products/:id
+router.delete("/:id", isAdmin, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    await deleteProduct(id);
+
+    res.send({ message: "Product deleted successfully" });
   } catch (error) {
     next(error);
   }

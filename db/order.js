@@ -1,184 +1,187 @@
-const client = require("./client");
-const { attachProductsToOrders } = require("./product");
+const prismaClient = require("@prisma/client");
+const prisma = new prismaClient.PrismaClient();
 
-async function createOrder({
-  isComplete,
-  total,
-  order_date,
-  userId,
-  productId,
-}) {
-  try {
-    const {
-      rows: [order],
-    } = await client.query(
-      `
-       INSERT INTO orders("isComplete", total, order_date, "userId", "productId")
-       VALUES($1, $2, $3, $4, $5)
-       ON CONFLICT ("userId", "productId") DO NOTHING
-       RETURNING *;
-        `,
-      [isComplete, total, order_date, userId, productId]
-    );
-
-    return order;
-  } catch (error) {
-    console.error(error);
+const getCart = async (id) => {
+  if (!id) {
+    throw new Error("Missing order data");
   }
-}
 
-async function getAllOrders() {
-  try {
-    const { rows: allOrders = [] } = await client.query(`
-    SELECT orders.*, products.product_name AS "productName"
-    FROM orders
-    JOIN products ON orders."productsId"=products.id;
-    `);
+  let latest = await prisma.order.findFirst({
+    where: {
+      isComplete: false,
+      userId: id,
+    },
+    include: {
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
 
-    const singleOrder = await Promise.all(
-      allOrders.map((order) => getAllOrdersByUser(order.id))
-    );
+  if (!latest) {
+    latest = await prisma.order.create({
+      data: {
+        isComplete: false,
+        total: 0,
+        userId: id,
+      },
+      include: {
+        products: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
 
-    if (!singleOrder) {
-      throw Error;
-    } else {
-      return singleOrder;
+  return latest;
+};
+
+const getOrder = async (id) => {
+  if (!id) {
+    throw new Error("Missing order data");
+  }
+
+  return prisma.order.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+};
+
+const getOrders = async (id) => {
+  if (!id) {
+    throw new Error("Missing order data");
+  }
+
+  // TODO Filter
+  return prisma.product.findMany({
+    where: {
+      userId: id,
+    },
+    include: {
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+};
+
+const updateOrder = async (id, data) => {
+  if (!id || !data) {
+    throw new Error("Missing order data");
+  }
+
+  if (data.products) {
+    const products = body?.products?.length
+      ? body?.products
+      : body?.products === null
+      ? []
+      : undefined;
+
+    // remove off body so we dont try to update
+    delete data.products;
+
+    if (products?.length) {
+      // Remove all products off order and readd them
+      await prisma.orderProduct.deleteMany({
+        where: {
+          orderId: id,
+        },
+      });
     }
-  } catch (error) {
-    console.error(error);
-  }
-}
 
-async function getOrderById(id) {
-  try {
-    const {
-      rows: [order],
-    } = await client.query(
-      `
-          SELECT *
-          FROM orders
-          WHERE id=$1;
-      `,
-      [id]
-    );
+    let total = 0;
+    for (const product of products) {
+      const orderProduct = await prisma.orderProduct.create({
+        data: {
+          quantity: product.quantity,
+          productId: product.productId,
+          orderId: id,
+        },
+        include: {
+          product: true,
+        },
+      });
 
-    return order;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function getAllOrdersByUserId({ userId }) {
-  try {
-    const { rows: orders = [] } = await client.query(`
-      SELECT orders.*; users.id AS "userId"
-      FROM orders
-      JOIN users ON orders."userId"=users.id
-      WHERE users.id=${userId};
-      `);
-
-    for (const order of orders) {
-      const products = await attachProductsToOrders(order);
-      order.products = products;
+      total += orderProduct.quantity * orderProduct.product.price;
     }
-
-    if (!orders) {
-      throw Error;
-    } else {
-      return orders;
-    }
-  } catch (error) {
-    console.error(error);
   }
-}
 
-// async function updateOrder1(productsId, quantity, total) {
-//   try {
-//     const {
-//       rows: [updatedOrder],
-//     } = await client.query(
-//       `
-//     UPDATE orders
-//     SET "productId" = $1, "quantity" = $2, AND "total" = $3
-//     RETURNING *;
-//     `,
-//       [productsId, quantity, total]
-//     );
+  return prisma.order.update({
+    where: {
+      id,
+    },
+    data: {
+      ...data,
+      total,
+    },
+    include: {
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+};
 
-//     for (const order of orders) {
-//       const products = await attachProductsToOrders(order);
-//       order.products = products;
-//     }
-
-//     if (!updatedOrder) {
-//       throw Error;
-//     } else {
-//       return updatedOrder;
-//     }
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
-async function updateOrder({ id, ...fields }) {
-  const updateString = Object.keys(fields)
-    .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", ");
-
-  try {
-    if (updateString.length > 0) {
-      await client.query(
-        `
-      UPDATE orders
-      SET ${updateString}
-      WHERE id=${id}
-      RETURNING *;
-      `,
-        Object.values(fields)
-      );
-    }
-    return await getOrderById(id);
-  } catch (error) {
-    throw new Error("Could not update Routine");
+const deleteOrder = async (id) => {
+  if (!id) {
+    throw new Error("Missing order data");
   }
-}
 
-async function deleteOrder(id) {
-  try {
-    await client.query(
-      `
-      DELETE FROM products
-      WHERE "productsId"=$1
-      RETURNING *;
-      `,
-      [id]
-    );
-    const {
-      rows: [deleteOrder],
-    } = await client.query(
-      `
-      DELETE FROM orders
-      WHERE id=$1
-      RETURNING *;
-      `,
-      [id]
-    );
+  return prisma.order.delete({
+    where: {
+      id,
+    },
+  });
+};
 
-    if (!deleteOrder) {
-      throw Error;
-    } else {
-      return order;
-    }
-  } catch (error) {
-    console.error(error);
+const addOrderProduct = async (id, data) => {
+  if (!id || !data) {
+    throw new Error("Missing order product data");
   }
-}
+
+  return prisma.orderProduct.create({
+    data: {
+      ...data,
+      orderId: id,
+    },
+  });
+};
+
+const removeOrderProduct = async (id, productId) => {
+  if (!id || !productId) {
+    throw new Error("Missing order product data");
+  }
+
+  return prisma.orderProduct.delete({
+    where: {
+      orderId: id,
+      productId,
+    },
+  });
+};
 
 module.exports = {
-  createOrder,
-  getOrderById,
-  getAllOrders,
-  getAllOrdersByUserId,
+  getCart,
+  getOrder,
+  getOrders,
   updateOrder,
   deleteOrder,
+  addOrderProduct,
+  removeOrderProduct,
 };

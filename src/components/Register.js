@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
+// import { BASE_URL } from "./api";
 import { Container, Typography, TextField, Button, Grid } from '@mui/material';
 import { borderColor } from "@mui/system";
-require("dotenv").config();
 
 const Register = ({token, setToken }) => {
     const [newUsername, setNewUsername] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [email, setEmail] = useState("");
+    const [newEmail, setNewEmail] = useState("");
 
     const [isAdmin, setIsAdmin] = useState(false)
 
@@ -20,7 +20,7 @@ const Register = ({token, setToken }) => {
         const newPassword = event.target.newPassword.value;
         const confirmPassword = event.target.confirmPassword.value;
 
-        const email = event.target.email.value;
+        const newEmail = event.target.newEmail.value;
 
 
         if (newUsername === "") {
@@ -33,7 +33,7 @@ const Register = ({token, setToken }) => {
             return alert("Passwords do not match")
         }
 
-        if (email === "") {
+        if (newEmail === "") {
 
             return alert("Please enter a Email Address")
         }
@@ -42,14 +42,14 @@ const Register = ({token, setToken }) => {
         setNewPassword("");
         setConfirmPassword("");
 
-        setEmail("");
+        setNewEmail("");
 
         setIsAdmin(false);
 
         const registerUser = async () => {
             try {
 
-                const response = await fetch(`${DATABASE_URL}users/register`, {
+                const response = await fetch(`${BASE_URL}users/register`, {
 
                     method: "POST",
                     headers: {
@@ -60,7 +60,7 @@ const Register = ({token, setToken }) => {
                             username: `${newUsername}`,
                             password: `${newPassword}`,
 
-                            email: `${email}`,
+                            email: `${newEmail}`,
 
                             isAdmin: false,
                         },
@@ -85,11 +85,11 @@ const Register = ({token, setToken }) => {
       };
       const handleConfirmChange = (event) => {
 
-        setConfirmPassword(event.target.value);
+        setConfirmedPassword(event.target.value);
       };
       const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-      };
+        setNewEmail(event.target.value);
+      }
 
       return (
         <Container maxWidth="sm">
@@ -146,7 +146,7 @@ const Register = ({token, setToken }) => {
                     fullWidth
                     name="email"
 
-                    value={email}
+                    value={newEmail}
 
                     onChange={handleEmailChange}
                     InputLabelProps={{ style: { color: 'white' } }}
