@@ -27,7 +27,10 @@ const App = () => {
     localStorage.setItem("token", token);
   }, [token]);
 
-  return (<div className="app">
+
+  return (
+    <div className="app">
+
     <BrowserRouter>
         <Navbar token={token} setToken={setToken} />
         {/* <SearchBar /> */}
@@ -46,6 +49,7 @@ const App = () => {
           <Route path="/" element={<Homepage setLoading={setLoading} />} />
           <Route path="/Products" element={<Products setLoading={setLoading} />} />
         </Routes>
+
         <Footer />
     </BrowserRouter>
     </div>
