@@ -26,6 +26,7 @@ const Register = ({ token, setToken }) => {
     setNewPassword("");
     setNewEmail("");
     setIsAdmin(false);
+    //yes
   };
 
   const registerNewUser = async (email, password) => {
