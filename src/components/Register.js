@@ -164,3 +164,4 @@ const Register = ({token, setToken }) => {
     }
 
 export default Register;
+

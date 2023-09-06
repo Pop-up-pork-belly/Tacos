@@ -24,7 +24,6 @@ const stripePromise = loadStripe(
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  
 
   useEffect(() => {
     localStorage.setItem("token", token);
@@ -37,22 +36,19 @@ const App = () => {
         <Navbar token={token} setToken={setToken} />
         {/* <SearchBar /> */}
         <Routes>
-          /* <Route
 
+          <Route
             path="/Register"
             element={<Register setToken={setToken} setLoading={setLoading} />}
           />
-          <Route
-            path="/Login"
-            element={<Login setToken={setToken} setLoading={setLoading} />}
-          />
-
-          <Route path="/Admin" element={<AdminDashboard />} />
-          <Route path="/Cart" element={<Cart />} />
+          {/* <Route path="/Search" element={<Search />} /> */}
 
           <Route path="/Profile" element={<Profile />} />
           <Route path="/" element={<Homepage setLoading={setLoading} />} />
-          <Route path="/Products" element={<Products setLoading={setLoading} />} />
+          <Route
+            path="/Products"
+            element={<Products setLoading={setLoading} />}
+          />
         </Routes>
 
         <Footer />
@@ -66,4 +62,6 @@ ReactDOM.render(
     <App />{" "}
   </Elements>,
   document.getElementById("app")
-)
+
+);
+

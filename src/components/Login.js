@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-// import { BASE_URL } from "./api";
 
 import { Container, Typography, TextField, Button, Grid } from "@mui/material";
+import { loginUser } from "../api/index";
+
 
 const Login = ({ token, setToken }) => {
   const [email, setEmail] = useState("");
@@ -13,7 +14,9 @@ const Login = ({ token, setToken }) => {
     const password = event.target.password.value;
 
     try {
-      await login(email, password);
+
+      login(email, password);
+
 
       setEmail("");
       setPassword("");
@@ -29,26 +32,14 @@ const Login = ({ token, setToken }) => {
   };
 
   const login = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/users/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
 
-        body: JSON.stringify({
-          user: {
-            email: `${email}`,
-            password: `${password}`,
-          },
-        }),
-      },
-    );
-    const result = await response.json();
+    const result = await loginUser(email, password);
 
-    if (result?.data?.token) {
-      localStorage.setItem("token", result.data.token);
+    setToken(result.token);
+    if (result.token) {
+      localStorage.setItem("token", result.token);
+      return result.token;
+
     } else {
       setError("Failed to login, please try again!");
       throw new Error("No Token");
@@ -115,4 +106,3 @@ const Login = ({ token, setToken }) => {
 };
 
 export default Login;
-
