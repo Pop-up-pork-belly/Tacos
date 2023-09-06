@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { requireUser } = require("./utils.js");
+const { requireUser, isAdmin } = require("./utils");
 
 const {
   getOrders,

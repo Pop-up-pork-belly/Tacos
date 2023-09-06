@@ -1,5 +1,10 @@
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
+=======
+const { requireUser, isAdmin } = require("./utils");
+
+>>>>>>> Development
 const {
   getProducts,
   createProduct,

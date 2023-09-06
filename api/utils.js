@@ -23,6 +23,16 @@ async function isAdmin(req, res, next) {
   }
 }
 
+function isAdmin(req, res, next) {
+  const user = req.user;
+
+  if (user && user.isAdmin) {
+    next();
+  } else {
+    res.status(403).json({ message: "Only admins can perform this action" });
+  }
+}
+
 module.exports = {
   requireUser,
   isAdmin,

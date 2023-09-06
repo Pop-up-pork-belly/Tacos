@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
@@ -60,6 +59,10 @@ router.use("/reviews", reviewsRouter);
 // ROUTER: /api/users
 const usersRouter = require("./users");
 router.use("/users", usersRouter);
+
+// ROUTER: /api/categories
+const categoriesRouter = require("./categories");
+router.use("/categories", categoriesRouter);
 
 // ROUTER: /api/categories
 const categoriesRouter = require("./categories");

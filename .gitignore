@@ -1,6 +1,12 @@
 node_modules
 .env
+<<<<<<< HEAD
 .DS_Store
 .vscode/
 prisma/.DS_Store
 localhostconnect.js
+=======
+localhostconnect.js
+.vscode
+.DS_Store
+>>>>>>> Development
