@@ -5,6 +5,6 @@ export { default as Login } from "./Login";
 export { default as Profile } from "./Profile";
 export {default as Products } from "./Products";
 export { default as Homepage } from "./Homepage";
-export { default as Footer } from "./Footer";
+export { default as Footer } from "./footer"
 export { default as AdminDashboard} from "./admin";
 export { default as Cart } from "./Cart";
