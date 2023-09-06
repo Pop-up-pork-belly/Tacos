@@ -9,22 +9,26 @@ import {
   Card,
   CardActions,
   CardContent,
-  Select,
-  MenuItem,
-  FormControl,
-  Input,
-  IconButton,
 } from "@mui/joy";
-import { AppBar, Toolbar, CardMedia, Paper } from "@mui/material";
+import { CardMedia } from "@mui/material";
 import Add from "@mui/icons-material/Add";
-import { Search } from "@mui/icons-material";
+import ProductModal from "./ProductsModal";
 
 const Products = ({}) => {
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const openModal = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+  };
 
   const fetchProducts = async () => {
     try {
@@ -46,35 +50,6 @@ const Products = ({}) => {
 
   return (
     <Box>
-      <AppBar position="static" sx={{ backgroundColor: "#272727" }}>
-        <Toolbar>
-          <FormControl sx={{ m: 2, minWidth: 150 }}>
-            <Select labelId="filter-label" id="filter" value="">
-              <MenuItem value="">
-                {" "}
-                <em>Choose a Team</em>
-              </MenuItem>
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="category1">Cloud 9</MenuItem>
-              <MenuItem value="category2">FaZe Clan</MenuItem>
-              <MenuItem value="category3">Sentinels</MenuItem>
-            </Select>
-          </FormControl>
-          <Paper
-            component="form"
-            sx={{ ml: 2, display: "flex", alignItems: "center" }}
-          >
-            <Input
-              sx={{ flex: 1, color: "black" }}
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search" }}
-            />
-            <IconButton color="inherit" aria-label="search" onClick={() => {}}>
-              <Search />
-            </IconButton>
-          </Paper>
-        </Toolbar>
-      </AppBar>
       <main>
         <Container py={9}>
           <Grid container spacing={5}>
@@ -105,7 +80,7 @@ const Products = ({}) => {
                       gutterBottom
                       textColor={"primary.100"}
                     >
-                      {product.title}
+                      {product.name}
                     </Typography>
                     <Typography textColor={"primary.100"}>
                       {product.description}
@@ -119,7 +94,7 @@ const Products = ({}) => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="md" variant="soft" color="primary">
+                    <Button size="md" variant="soft" color="primary" onClick={() => openModal(product)}>
                       View
                     </Button>
                     <Button
@@ -134,6 +109,13 @@ const Products = ({}) => {
                 </Card>
               </Grid>
             ))}
+            {selectedProduct && (
+        <ProductModal
+          isOpen={!!selectedProduct}
+          onClose={closeModal}
+          product={selectedProduct}
+        />
+      )}
           </Grid>
         </Container>
       </main>

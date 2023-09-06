@@ -105,12 +105,52 @@ async function main() {
     },
   });
 
-  const frenchFries1 = await prisma.productCategory.upsert({
-    where: { name: "FRENCHFRIES" },
+  const category1 = await prisma.productCategory.upsert({
+    where: { name: "test1" },
     update: {},
     create: {
-      id: 5,
-      name: "FRENCHFRIES",
+      id: 11,
+      name: "test1",
+    },
+  });
+  const fcategory2 = await prisma.productCategory.upsert({
+    where: { name: "test2" },
+    update: {},
+    create: {
+      id: 6,
+      name: "test2",
+    },
+  });
+  const category3 = await prisma.productCategory.upsert({
+    where: { name: "test3" },
+    update: {},
+    create: {
+      id: 7,
+      name: "test3",
+    },
+  });
+  const category4 = await prisma.productCategory.upsert({
+    where: { name: "test4" },
+    update: {},
+    create: {
+      id: 8,
+      name: "test4",
+    },
+  });
+  const category5 = await prisma.productCategory.upsert({
+    where: { name: "test5" },
+    update: {},
+    create: {
+      id: 9,
+      name: "test5",
+    },
+  });
+  const category6 = await prisma.productCategory.upsert({
+    where: { name: "test6" },
+    update: {},
+    create: {
+      id: 10,
+      name: "test6",
     },
   });
 
@@ -119,10 +159,10 @@ async function main() {
     where: { id: 1 },
     update: {},
     create: {
-      name: "NRG Tenz shirt",
-      description: "Blahblahblahbalhbalabhlab",
-      price: 25,
-      image: "https://placehold.co/300x400",
+      name: "Faze Clan 2024 Diamond Jersey",
+      description: "Newest Jersey for our supporters",
+      price: 60,
+      image: "https://shop.fazeclan.com/cdn/shop/products/Jersey-_0000_Front-min_700x.jpg?v=1677657080",
       categoryId: 1,
     },
   });
@@ -130,10 +170,10 @@ async function main() {
     where: { id: 2 },
     update: {},
     create: {
-      name: "Cloud9 shirt",
-      description: "djwiladjiwlajdijwaldjwilajdlw",
-      price: 20,
-      image: "https://placehold.co/600x400",
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "League of Legends Edition",
+      price: 80,
+      image: "https://store.cloud9.gg/cdn/shop/files/LOL_Front_400x.png?v=1685159158",
       categoryId: 2,
     },
   });
@@ -141,10 +181,10 @@ async function main() {
     where: { id: 3 },
     update: {},
     create: {
-      name: "Party shirt",
-      description: "SO ON SO FORTH PARTY",
-      price: 15,
-      image: "https://placehold.co/200x200",
+      name: "NAVI x PUMA 2023 Pro Kit",
+      description: "Gameday Jersey",
+      price: 50,
+      image: "https://shop.navi.gg/files/resized/products/navi67131-2.400x400.png.webp",
       categoryId: 3,
     },
   });
@@ -152,10 +192,10 @@ async function main() {
     where: { id: 4 },
     update: {},
     create: {
-      name: "Esports shirt",
-      description: "HAPPY ESPORTS",
-      price: 12,
-      image: "https://placehold.co/300x300",
+      name: "100T 2023 Glacial Jersey",
+      description: "Gameday Jersey",
+      price: 100,
+      image: "https://100thieves.com/cdn/shop/files/100thieves_JERSEY_1x1_001.jpg?v=1687306724&width=1280",
       categoryId: 4,
     },
   });
@@ -163,11 +203,71 @@ async function main() {
     where: { id: 5 },
     update: {},
     create: {
-      name: "FRENCHFRIES shirt",
-      description: "FRENCH FRIES",
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "CSGO & SSBM Pro Edition",
+      price: 50,
+      image: "https://store.cloud9.gg/cdn/shop/files/BC_Front_400x.png?v=1690921901",
+      categoryId: 11,
+    },
+  });
+
+  const testNav = await prisma.product.upsert({
+    where: { id: 6 },
+    update: {},
+    create: {
+      name: "Bape X Faze Clan",
+      description: "Game Tee",
+      price: 150,
+      image: "https://shop.fazeclan.com/cdn/shop/products/jersey-min_700x.png?v=1676880145",
+      categoryId: 6,
+    },
+  });
+
+  const faze = await prisma.product.upsert({
+    where: { id: 7 },
+    update: {},
+    create: {
+      name: "NAVI x PUMA 2022 T-Shirt",
+      description: "Last years supporter T-Shirt",
       price: 30,
-      image: "https://placehold.co/600x400",
-      categoryId: 5,
+      image: "https://shop.navi.gg/files/resized/products/navi54542.400x400.png.webp",
+      categoryId: 7,
+    },
+  });
+
+  const cloud = await prisma.product.upsert({
+    where: { id: 8 },
+    update: {},
+    create: {
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "VALORANT Edition",
+      price: 60,
+      image: "https://store.cloud9.gg/cdn/shop/files/VAL_Front_1_400x.png?v=1685159919",
+      categoryId: 8,
+    },
+  });
+
+  const oneHundredT = await prisma.product.upsert({
+    where: { id: 9 },
+    update: {},
+    create: {
+      name: "100T 2024 Primary Jersey",
+      description: "Primary Jersey for the 2023 season",
+      price: 70,
+      image: "https://100thieves.com/cdn/shop/products/100Thieves_Jersey_001copy-min.jpg?v=1673292429&width=1280",
+      categoryId: 9,
+    },
+  });
+
+  const fazeAt = await prisma.product.upsert({
+    where: { id: 10 },
+    update: {},
+    create: {
+      name: "Atlanta Faze Black ",
+      description: "2023 Pro Jersey",
+      price: 60,
+      image: "https://shop.fazeclan.com/cdn/shop/products/Faze-ATL-_0005_Front-min_600x.jpg?v=1674114905",
+      categoryId: 10,
     },
   });
 
@@ -209,7 +309,7 @@ async function main() {
       rating: 9,
       comment: "My store is amazing and so is this product",
       userId: 5,
-      productId: 5,
+      productId: 11,
     },
   });
 

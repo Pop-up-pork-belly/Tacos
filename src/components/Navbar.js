@@ -65,7 +65,7 @@ const Navbar = ({ token, setToken }) => {
               color="inherit"
               sx={{ marginRight: 2 }}
             >
-              Teams
+              Profile
             </Button>
           ) : null}
           {!token ? (
