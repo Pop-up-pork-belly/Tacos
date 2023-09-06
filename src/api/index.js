@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* This file features and exports all of our calls to the API*/
 //.env files
 export const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -705,6 +704,3 @@ export const deleteOrder = async (token, orderId) => {
 };
 
 // Cart and OrderProduct
-=======
-export const BASE_URL = `localhost:3000/`
->>>>>>> Development
