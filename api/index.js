@@ -64,8 +64,4 @@ router.use("/users", usersRouter);
 const categoriesRouter = require("./categories");
 router.use("/categories", categoriesRouter);
 
-// ROUTER: /api/categories
-const categoriesRouter = require("./categories");
-router.use("/categories", categoriesRouter);
-
 module.exports = router;

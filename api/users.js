@@ -2,31 +2,17 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-<<<<<<< HEAD
-const { requireUser, isAdmin } = require("./utils.js");
-=======
 const { requireUser, isAdmin } = require("./utils");
 
->>>>>>> Development
 const {
   login,
   register,
   getUser,
-<<<<<<< HEAD
   getUsers,
   updateUser,
   getOrders,
   getCart,
   deleteUser,
-=======
-  getUserById,
-  getUserByUsername,
-  updateUser,
-  destroyUser,
-  getAllOrdersByUserId,
-  getOrderById,
-  getReviewByUserId,
->>>>>>> Development
 } = require("../db");
 
 // POST /api/users/register
@@ -34,7 +20,6 @@ router.post("/register", async (req, res, next) => {
   console.log("req.body: ", req.body);
   const { email, password } = req.body;
   try {
-<<<<<<< HEAD
     const { user, token } = await register(email, password);
     res.send({
       message: "Thank you for registering! :)",
@@ -43,49 +28,6 @@ router.post("/register", async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-=======
-    const _user = await getUserByUsername(username);
-    if (_user) {
-      res.send({
-        name: "UserNameExistsError",
-        message: `User ${username} is already taken.`,
-      });
-    }
-    if (password.length < passwordMinLength) {
-      res.send({
-        name: "PasswordMustBe8CharactersError",
-        message: "Password Too Short!",
-      });
-    } else {
-      const user = await createUser({
-        username,
-        password,
-        email,
-        isAdmin,
-      });
-
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "2w",
-        }
-      );
-      res.send({
-        message: "Thank you for registering! :)",
-        token: "token",
-        user: {
-          id: user.id,
-          username,
-        },
-      });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
->>>>>>> Development
   }
 });
 
