@@ -1,7 +1,8 @@
 module.exports = {
-  ...require("./category"),
-  ...require("./order"),
-  ...require("./product"),
-  ...require("./review"),
-  ...require("./user"),
+  ...require("./auth.js"),
+  ...require("./category.js"),
+  ...require("./order.js"),
+  ...require("./product.js"),
+  ...require("./review.js"),
+  ...require("./user.js"),
 };
