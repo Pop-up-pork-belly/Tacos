@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // const prismaClient = require("@prisma/client");
 // const prisma = new prismaClient.PrismaClient();
 
@@ -71,6 +72,8 @@
 // };
 
 
+=======
+>>>>>>> 170364e565e89193e0b54cfe2132f6129fb823c9
 const client = require("./client");
 
 async function createCategory({ name }) {
