@@ -1,4 +1,5 @@
 export const BASE_URL = `localhost:3000/`;
+const cors = require('cors');
 
 /* This file features and exports all of our calls to the API*/
 //.env files
@@ -49,7 +50,7 @@ export const registerUser = async (email, password) => {
         password,
       })
     );
-    const response = await fetch(`${BASE_INDEX_URL}/users/register`, {
+    const response = await fetch(`${BASE_INDEX_URL}register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
