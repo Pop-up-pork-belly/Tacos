@@ -4,7 +4,7 @@ import { borderColor } from "@mui/system";
 import { registerUser } from "../api/index";
 
 const Register = ({ token, setToken }) => {
-  const [newEmail, setNewEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -12,28 +12,30 @@ const Register = ({ token, setToken }) => {
     event.preventDefault();
     console.log(event);
 
-    const newEmail = event.target.newEmail.value;
+   
+    // const email = event.target.email.value;
     const newPassword = event.target.newPassword.value;
 
     if (newPassword.length < 8) {
       return alert("Password must be at least 8 characters");
     }
-    if (newEmail === "") {
+    if (email === "") {
       return alert("Please enter a Email Address");
     }
 
-    registerNewUser(newEmail, newPassword);
+    registerNewUser(email, newPassword);
     setNewPassword("");
-    setNewEmail("");
+    setEmail("");
     setIsAdmin(false);
   };
 
   const registerNewUser = async (email, password) => {
     try {
       const result = await registerUser(email, password);
-      localStorage.setItem("token", result.token);
-      setToken(result.token);
-      return result.token;
+      // localStorage.setItem("token", result.token);
+      // setToken(result.token);
+      // return result.token;
+      return result;
     } catch (err) {
       console.error(err);
     }
@@ -43,7 +45,7 @@ const Register = ({ token, setToken }) => {
     setNewPassword(event.target.value);
   };
   const handleEmailChange = (event) => {
-    setNewEmail(event.target.value);
+    setEmail(event.target.value);
   };
   return (
     <Container maxWidth="sm">
@@ -61,7 +63,7 @@ const Register = ({ token, setToken }) => {
                 variant="outlined"
                 fullWidth
                 name="newEmail"
-                value={newEmail}
+                value={email}
                 onChange={handleEmailChange}
                 InputLabelProps={{ style: { color: "white" } }}
                 InputProps={{ style: { color: "white" } }}
