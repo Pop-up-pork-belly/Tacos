@@ -9,72 +9,124 @@ import {
   Card,
   CardActions,
   CardContent,
-  Select,
-  MenuItem,
-  FormControl,
-  Input,
-  IconButton,
 } from "@mui/joy";
-import { AppBar, Toolbar, CardMedia, Paper } from "@mui/material";
+import { CardMedia } from "@mui/material";
 import Add from "@mui/icons-material/Add";
-import { Search } from "@mui/icons-material";
+import ProductModal from "./ProductModal";
+import AddedToCartModal from "./addedToCartModal";
 
 const Products = ({}) => {
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isAddedToCartModalOpen, setIsAddedToCartModalOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+  
+  const initialProducts = [
+    {
+      id: 1,
+      name: "Faze Clan 2024 Diamond Jersey",
+      description: "Newest Jersey for our supporters",
+      price: 60,
+      image:
+        "https://shop.fazeclan.com/cdn/shop/products/Jersey-_0000_Front-min_700x.jpg?v=1677657080",
+    },
+    {
+      id: 2,
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "League of Legends Edition",
+      price: 80,
+      image:
+        "https://store.cloud9.gg/cdn/shop/files/LOL_Front_400x.png?v=1685159158",
+    },
+    {
+      id: 3,
+      name: "NAVI x PUMA 2023 Pro Kit",
+      description: "Gameday Jersey",
+      price: 50,
+      image:
+      "https://shop.navi.gg/files/resized/products/navi67131-2.400x400.png.webp",
+    },
+   
+    {
+      id: 4,
+      name: "100T 2023 Glacial Jersey",
+      description: "Gameday Jersey",
+      price: 100,
+      image:
+      "https://100thieves.com/cdn/shop/files/100thieves_JERSEY_1x1_001.jpg?v=1687306724&width=1280",
+    },
+    {
+      id: 5,
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "CSGO & SSBM Pro Edition",
+      price: 50,
+      image:
+      "https://store.cloud9.gg/cdn/shop/files/BC_Front_400x.png?v=1690921901",
+    },
+    {
+      id: 6,
+      name: "Bape X Faze Clan",
+      description: "Game Tee",
+      price: 150,
+      image:
+      "https://shop.fazeclan.com/cdn/shop/products/jersey-min_700x.png?v=1676880145",
+    },
+    {
+      id: 7,
+      name: "2023 Cloud9 Official Summer Jersey",
+      description: "VALORANT Edition",
+      price: 60,
+      image:
+      "https://store.cloud9.gg/cdn/shop/files/VAL_Front_1_400x.png?v=1685159919",
+    },
+    {
+      id: 8,
+      name: "100T 2024 Primary Jersey",
+      description: "Primary Jersey for the 2023 season",
+      price: 70,
+      image:
+      "https://100thieves.com/cdn/shop/products/100Thieves_Jersey_001copy-min.jpg?v=1673292429&width=1280",
+    },
+    {
+      id: 9,
+      name: "Atlanta Faze Black ",
+      description: "2023 Pro Jersey",
+      price: 60,
+      image:
+      "https://shop.fazeclan.com/cdn/shop/products/Faze-ATL-_0005_Front-min_600x.jpg?v=1674114905",
+    },
+    {
+      id: 10,
+      name: "NAVI x PUMA 2022 T-Shirt",
+      description: "Last years supporter T-Shirt",
+      price: 30,
+      image:
+        "https://store.cloud9.gg/cdn/shop/files/LOL_Front_400x.png?v=1685159158",
+    },
+
+    
+  ];
 
   useEffect(() => {
-    fetchProducts();
+    setProducts(initialProducts);
   }, []);
 
-  const fetchProducts = async () => {
-    try {
-      const result = await fetch(`http://localhost:4000/api/products`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  const addToCart = () => {
+    setIsAddedToCartModalOpen(true)
+  }
+  const openModal = (product) => {
+    setSelectedProduct(product);
 
-      const data = await result.json();
-
-      console.log(data);
-      setProducts(data);
-    } catch (e) {
-      console.error(e);
-    }
   };
+
+  const closeModal = () => {
+    setIsAddedToCartModalOpen(false)
+    setSelectedProduct(null);
+  };
+
 
   return (
     <Box>
-      <AppBar position="static" sx={{ backgroundColor: "#272727" }}>
-        <Toolbar>
-          <FormControl sx={{ m: 2, minWidth: 150 }}>
-            <Select labelId="filter-label" id="filter" value="">
-              <MenuItem value="">
-                {" "}
-                <em>Choose a Team</em>
-              </MenuItem>
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="category1">Cloud 9</MenuItem>
-              <MenuItem value="category2">FaZe Clan</MenuItem>
-              <MenuItem value="category3">Sentinels</MenuItem>
-            </Select>
-          </FormControl>
-          <Paper
-            component="form"
-            sx={{ ml: 2, display: "flex", alignItems: "center" }}
-          >
-            <Input
-              sx={{ flex: 1, color: "black" }}
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search" }}
-            />
-            <IconButton color="inherit" aria-label="search" onClick={() => {}}>
-              <Search />
-            </IconButton>
-          </Paper>
-        </Toolbar>
-      </AppBar>
       <main>
         <Container py={9}>
           <Grid container spacing={5}>
@@ -95,7 +147,7 @@ const Products = ({}) => {
                 >
                   <CardMedia
                     component="img"
-                    alt={product.title}
+                    alt={product.name}
                     height="250"
                     image={product.image}
                   />
@@ -105,7 +157,7 @@ const Products = ({}) => {
                       gutterBottom
                       textColor={"primary.100"}
                     >
-                      {product.title}
+                      {product.name}
                     </Typography>
                     <Typography textColor={"primary.100"}>
                       {product.description}
@@ -119,7 +171,7 @@ const Products = ({}) => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="md" variant="soft" color="primary">
+                    <Button size="md" variant="soft" color="primary" onClick={() => openModal(product)}>
                       View
                     </Button>
                     <Button
@@ -127,6 +179,7 @@ const Products = ({}) => {
                       variant="soft"
                       color="neutral"
                       startDecorator={<Add />}
+                      onClick={addToCart} 
                     >
                       Add to Cart
                     </Button>
@@ -134,9 +187,17 @@ const Products = ({}) => {
                 </Card>
               </Grid>
             ))}
+            {selectedProduct && (
+        <ProductModal
+          isOpen={!!selectedProduct}
+          onClose={closeModal}
+          product={selectedProduct}
+        />
+      )}
           </Grid>
         </Container>
       </main>
+      <AddedToCartModal isOpen={isAddedToCartModalOpen} onClose={closeModal} />
     </Box>
   );
 };

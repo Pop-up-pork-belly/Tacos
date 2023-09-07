@@ -9,3 +9,5 @@ export { default as Homepage } from "./Homepage";
 export { default as Footer } from "./footer";
 export { default as AdminDashboard } from "./admin";
 export { default as Cart } from "./Cart";
+export { default as ProductModal} from "./ProductModal";
+export { default as AddedToCartModal } from "./addedToCartModal"

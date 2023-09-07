@@ -11,8 +11,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([
-    { id: 1, name: "User 1", isAdmin: false },
-    { id: 2, name: "User 2", isAdmin: false },
+    { id: 1, email: "drewH@gmail.com", isAdmin: false },
+    { id: 2, email: "eddie@gmail.com", isAdmin: true },
+    { id: 3, email: "Harshil@gmail.com", isAdmin: false },
+    { id: 4, email: "dom@gmail.com", isAdmin: true },
+    
 
   ]);
 
@@ -36,7 +39,7 @@ const AdminDashboard = () => {
           <TableHead>
             <TableRow>
               <TableCell style={{ color: "white" }}>ID</TableCell>
-              <TableCell style={{ color: "white" }}>Name</TableCell>
+              <TableCell style={{ color: "white" }}>Email</TableCell>
               <TableCell style={{ color: "white" }}>Admin</TableCell>
               <TableCell style={{ color: "white" }}>Actions</TableCell>
             </TableRow>
@@ -45,7 +48,7 @@ const AdminDashboard = () => {
             {users.map((user) => (
               <TableRow key={user.id} >
                 <TableCell style={{ color: "white" }}>{user.id}</TableCell>
-                <TableCell style={{ color: "white" }}>{user.name}</TableCell>
+                <TableCell style={{ color: "white" }}>{user.email}</TableCell>
                 <TableCell style={{ color: "white" }}>{user.isAdmin ? "Yes" : "No"}</TableCell>
                 <TableCell>
                   <Button
