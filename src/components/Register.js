@@ -32,9 +32,9 @@ const Register = ({ token, setToken }) => {
   const registerNewUser = async (email, password) => {
     try {
       const result = await registerUser(email, password);
-      // localStorage.setItem("token", result.token);
-      // setToken(result.token);
-      // return result.token;
+      localStorage.setItem("token", result.token);
+      setToken(result.token);
+      return result.token;
       return result;
     } catch (err) {
       console.error(err);
