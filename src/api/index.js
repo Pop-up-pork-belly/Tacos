@@ -1,5 +1,5 @@
 export const BASE_URL = `localhost:3000/`;
-const cors = require('cors');
+const cors = require("cors");
 
 /* This file features and exports all of our calls to the API*/
 //.env files
@@ -28,7 +28,7 @@ export const fetchUsers = async (token) => {
 };
 
 // Creating a new User and sending it to the server for a token
-export const registerUser = async (email, password) => {
+export const registerUser = async ({ username, password, email, isAdmin }) => {
   const minLength = 8;
   const specChar = /[@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?!]+/;
   const uppercaseChar = /[A-Z]/;
@@ -44,20 +44,16 @@ export const registerUser = async (email, password) => {
   }
 
   try {
-    console.log(
-      JSON.stringify({
-        email,
-        password,
-      })
-    );
     const response = await fetch(`${BASE_INDEX_URL}register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email,
+        username,
         password,
+        email,
+        isAdmin,
       }),
     });
     const result = await response.json();
